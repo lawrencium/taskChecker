@@ -1,9 +1,10 @@
 {
   "devDependencies": {
     "gulp": "latest",
-    "gulp-util": "latest",
+    "gulp-concat": "latest",
     "gulp-sass": "latest",
     "gulp-uglify": "latest",
-    "gulp-concat": "latest"
+    "gulp-util": "latest",
+    "jasmine": "^2.8.0"
   }
 }
