@@ -20,7 +20,7 @@ gulp.task('build', () => {
 });
 
 gulp.task('dist', ['clean', 'build'], () => {
-  gulp.src(['key.pem', 'manifest.json'])
+  gulp.src(['config/key.pem', 'manifest.json'])
     .pipe(jsonReplace({
       src: 'config/config.json',
       identify: '__taskChecker__'
