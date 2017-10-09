@@ -52,3 +52,5 @@ fabric.properties
 
 /node_modules/
 /key.pem
+/dist/
+/bower_components/

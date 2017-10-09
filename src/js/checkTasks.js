@@ -27,7 +27,7 @@ function checkTasks() {
             error: function (err) {
               console.error('Something went wrong when retrieving tasks', err);
               chrome.browserAction.setIcon({
-                path: 'images/checkmark_gray.png'
+                path: '../../public/images/checkmark_gray.png'
               });
             }
           });
@@ -46,11 +46,11 @@ function checkTasks() {
               chrome.browserAction.setBadgeText({text: totalTasksDue.toString()});
               chrome.browserAction.setBadgeBackgroundColor({color: warningRed});
               chrome.browserAction.setIcon({
-                path: 'images/checkmark_red.png'
+                path: '../../public/images/checkmark_red.png'
               });
             } else {
               chrome.browserAction.setIcon({
-                path: 'images/checkmark_green.png'
+                path: '../../public/images/checkmark_green.png'
               });
               chrome.browserAction.setBadgeText({text: ''});
             }
@@ -59,7 +59,7 @@ function checkTasks() {
       error: function (err) {
         console.error('Something went wrong when retrieving task lists', err);
         chrome.browserAction.setIcon({
-          path: 'images/checkmark_gray.png'
+          path: '../../public/images/checkmark_gray.png'
         });
       }
     });

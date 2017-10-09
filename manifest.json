@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "TaskCheckerSimple",
+  "description": "This extension notifies the user of any due tasks",
+  "version": "1.3",
+  "browser_action": {
+    "default_icon": "public/images/checkmark_green.png",
+    "default_title": "Simple Task Checker"
+  },
+    "background": {
+      "page": "src/background.html",
+      "persistent": false
+    },
+  "permissions": [
+    "identity",
+    "alarms"
+  ],
+  "oauth2": {
+    "client_id": "__taskChecker__clientId",
+    "scopes": [
+      "https://www.googleapis.com/auth/tasks"
+    ]
+  },
+  "key": "__taskChecker__key"
+}
