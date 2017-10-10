@@ -1,3 +1,7 @@
+import _ from 'lodash';
+import $ from 'jquery';
+import moment from 'moment';
+
 function checkTasks() {
   chrome.identity.getAuthToken({interactive: true}, function (token) {
     const baseUrl = 'https://www.googleapis.com/tasks/v1';
