@@ -71,7 +71,6 @@ function checkTasks() {
 }
 
 chrome.alarms.create('periodicallyCheckTasks', {delayInMinutes: 1, periodInMinutes: 1});
-checkTasks();
 chrome.alarms.onAlarm.addListener(function () {
   checkTasks();
 });
