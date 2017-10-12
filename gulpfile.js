@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const jasmine = require('gulp-jasmine');
+const exec = require('child_process').exec;
 const jsonReplace = require('gulp-json-replace');
 const del = require('del');
 const inject = require('gulp-inject');
@@ -24,9 +24,12 @@ gulp.task('clean', () => {
   return del(['dist/**'], {force: true});
 });
 
-gulp.task('test', () => {
-  return gulp.src(config.testDirectory)
-    .pipe(jasmine());
+gulp.task('test', (done) => {
+  exec('npm test', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.error(stderr);
+    done(err);
+  });
 });
 
 gulp.task('config', () => {
