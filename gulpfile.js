@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const exec = require('child_process').exec;
+const karma = require('karma').Server;
 const jsonReplace = require('gulp-json-replace');
 const del = require('del');
 const inject = require('gulp-inject');
@@ -10,6 +10,7 @@ const buffer = require('vinyl-buffer');
 const sourcemaps = require('gulp-sourcemaps');
 const fs = require('fs');
 const watchify = require('watchify');
+const jshint = require('gulp-jshint');
 
 const config = {
   testDirectory: ['test/**/*[sS]pec.js'],
@@ -24,12 +25,26 @@ gulp.task('clean', () => {
   return del(['dist/**'], {force: true});
 });
 
-gulp.task('test', (done) => {
-  exec('npm test', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.error(stderr);
-    done(err);
-  });
+gulp.task('jshint-src', () => {
+  return gulp.src('src/**/*.js')
+    .pipe(jshint({esversion: 6}))
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
+});
+
+gulp.task('jshint-test', () => {
+  return gulp.src(['src/**/*.js', 'test/**/*.js'])
+    .pipe(jshint({esversion: 6, expr: true}))
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
+});
+
+gulp.task('jshint', ['jshint-src', 'jshint-test']);
+
+gulp.task('test', ['jshint'], (done) => {
+  return karma.start({
+    configFile: process.cwd() + '/karma.conf.js'
+  }, done);
 });
 
 gulp.task('config', () => {
@@ -46,7 +61,7 @@ gulp.task('static', () => {
     .pipe(gulp.dest('dist/public'))
 });
 
-gulp.task('build', () => {
+gulp.task('build', ['jshint'], () => {
   const bundler = browserify({
     entries: 'src/js/checkTasks.js',
     debug: true
