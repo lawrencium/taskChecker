@@ -1,18 +1,18 @@
-const gulp = require('gulp');
-const karma = require('karma').Server;
-const jsonReplace = require('gulp-json-replace');
-const del = require('del');
-const inject = require('gulp-inject');
-const uglify = require('gulp-uglify');
-const browserify = require('browserify');
-const source = require('vinyl-source-stream');
-const buffer = require('vinyl-buffer');
-const sourcemaps = require('gulp-sourcemaps');
-const fs = require('fs');
-const watchify = require('watchify');
-const jshint = require('gulp-jshint');
+var gulp = require('gulp');
+var karma = require('karma').Server;
+var jsonReplace = require('gulp-json-replace');
+var del = require('del');
+var inject = require('gulp-inject');
+var uglify = require('gulp-uglify');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var sourcemaps = require('gulp-sourcemaps');
+var fs = require('fs');
+var watchify = require('watchify');
+var jshint = require('gulp-jshint');
 
-const config = {
+var config = {
   testDirectory: ['test/**/*[sS]pec.js'],
   keyPath: 'config/key.pem',
   manifest: 'manifest.json',
@@ -21,18 +21,18 @@ const config = {
 
 };
 
-gulp.task('clean', () => {
+gulp.task('clean', function () {
   return del(['dist/**'], {force: true});
 });
 
-gulp.task('jshint-src', () => {
+gulp.task('jshint-src', function () {
   return gulp.src('src/**/*.js')
     .pipe(jshint({esversion: 6}))
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('jshint-test', () => {
+gulp.task('jshint-test', function () {
   return gulp.src(['src/**/*.js', 'test/**/*.js'])
     .pipe(jshint({esversion: 6, expr: true}))
     .pipe(jshint.reporter('jshint-stylish'))
@@ -41,13 +41,13 @@ gulp.task('jshint-test', () => {
 
 gulp.task('jshint', ['jshint-src', 'jshint-test']);
 
-gulp.task('test', ['jshint'], (done) => {
+gulp.task('test', ['jshint'], function (done) {
   return karma.start({
     configFile: process.cwd() + '/karma.conf.js'
   }, done);
 });
 
-gulp.task('config', () => {
+gulp.task('config', function () {
   return gulp.src(config.manifest)
     .pipe(jsonReplace({
       src: config.manifestConfig,
@@ -56,13 +56,13 @@ gulp.task('config', () => {
     .pipe(gulp.dest('dist'))
 });
 
-gulp.task('static', () => {
+gulp.task('static', function () {
   return gulp.src(config.staticFileDirectories)
     .pipe(gulp.dest('dist/public'))
 });
 
-gulp.task('build', ['jshint'], () => {
-  const bundler = browserify({
+gulp.task('build', ['jshint'], function () {
+  var bundler = browserify({
     entries: 'src/js/checkTasks.js',
     debug: true
   });
@@ -77,19 +77,19 @@ gulp.task('build', ['jshint'], () => {
 
 });
 
-gulp.task('bundle', ['config', 'static', 'build'], () => {
+gulp.task('bundle', ['config', 'static', 'build'], function () {
   return gulp.src('src/background.html')
     .pipe(inject(gulp.src('dist/src/js/bundle.js', {read: false}), {ignorePath: 'dist/'}))
     .pipe(gulp.dest('dist/src'));
 });
 
-gulp.task('dist', ['bundle'], () => {
+gulp.task('dist', ['bundle'], function () {
   gulp.src(config.keyPath)
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('dev', ['bundle'], () => {
-  const b = browserify({
+gulp.task('dev', ['bundle'], function () {
+  var b = browserify({
     entries: ['src/js/checkTasks.js'],
     cache: {},
     packageCache: {},
