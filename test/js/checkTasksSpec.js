@@ -1,5 +1,6 @@
+const expect = require('chai').expect;
 describe('test', function() {
-  it('should fail', function() {
-    expect(true).toBeTruthy();
+  it('should pass', function() {
+    expect(true).to.be.true;
   });
 });
