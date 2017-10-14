@@ -42,7 +42,7 @@ function checkTasks() {
             const incompleteTasks = _.filter(_.flatten(_.map(results, function (result) {
               return result.items;
             })), function (task) {
-              return !_.isNil(task) && task.status !== 'completed'
+              return !_.isNil(task) && task.status !== 'completed';
             });
             const totalTasksDue = incompleteTasks.length;
 
@@ -71,12 +71,11 @@ function checkTasks() {
 }
 
 chrome.alarms.create('periodicallyCheckTasks', {delayInMinutes: 1, periodInMinutes: 1});
-checkTasks();
 chrome.alarms.onAlarm.addListener(function () {
   checkTasks();
 });
 chrome.browserAction.onClicked.addListener(function () {
   checkTasks();
-  chrome.tabs.create({url: 'https://mail.google.com/tasks/canvas'})
+  chrome.tabs.create({url: 'https://mail.google.com/tasks/canvas'});
 });
 checkTasks();
