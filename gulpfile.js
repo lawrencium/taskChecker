@@ -10,7 +10,7 @@ const buffer = require('vinyl-buffer');
 const sourcemaps = require('gulp-sourcemaps');
 const fs = require('fs');
 const watchify = require('watchify');
-const jshint = require('gulp-jshint');
+const eslint = require('gulp-eslint');
 
 const config = {
   testDirectory: ['test/**/*[sS]pec.js'],
@@ -25,27 +25,24 @@ gulp.task('clean', () => {
   return del(['dist/**'], {force: true});
 });
 
-gulp.task('jshint-src', () => {
-  return gulp.src('src/**/*.js')
-    .pipe(jshint({esversion: 6}))
-    .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(jshint.reporter('fail'));
-});
-
-gulp.task('jshint-test', () => {
+gulp.task('lint', () => {
   return gulp.src(['src/**/*.js', 'test/**/*.js'])
-    .pipe(jshint({esversion: 6, expr: true}))
-    .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(jshint.reporter('fail'));
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task('jshint', ['jshint-src', 'jshint-test']);
+gulp.task('karma-test', test);
 
-gulp.task('test', ['jshint'], (done) => {
+gulp.task('test', ['lint'], test);
+
+gulp.task('test-no-lint', ['karma-test']);
+
+function test(done) {
   return karma.start({
     configFile: process.cwd() + '/karma.conf.js'
   }, done);
-});
+}
 
 gulp.task('config', () => {
   return gulp.src(config.manifest)
