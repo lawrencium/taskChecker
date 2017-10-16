@@ -9,6 +9,7 @@ const eslint = require('gulp-eslint');
 const bump = require('gulp-bump');
 const minimist = require('minimist');
 const gutil = require('gulp-util');
+const runSequence = require('run-sequence');
 
 const config = {
   testDirectory: ['test/**/*[sS]pec.js'],
@@ -72,9 +73,15 @@ gulp.task('bump-version', function () {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('dist', ['bump-version', 'inject-html'], () => {
-  gulp.src(config.keyPath)
-    .pipe(gulp.dest('dist'));
+gulp.task('dist', () => {
+  runSequence(
+    'clean',
+    'bump-version',
+    'inject-html',
+    () => gulp.src(config.keyPath)
+      .pipe(gulp.dest('dist'))
+  );
+
 });
 
 gulp.task('dev', ['inject-html'], () => {

@@ -52,7 +52,7 @@ fabric.properties
 
 /node_modules/
 /**/key.pem
-/dist/
+/dist/**
 /tmp/
 /bower_components/
 /config/config.json
