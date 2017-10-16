@@ -6,6 +6,9 @@ const inject = require('gulp-inject');
 const uglify = require('gulp-uglify');
 const webpack = require('webpack');
 const eslint = require('gulp-eslint');
+const bump = require('gulp-bump');
+const minimist = require('minimist');
+const gutil = require('gulp-util');
 
 const config = {
   testDirectory: ['test/**/*[sS]pec.js'],
@@ -15,6 +18,8 @@ const config = {
   staticFileDirectories: 'public/**/*',
 
 };
+
+const commandLineArguments = minimist(process.argv.slice(2));
 
 gulp.task('clean', () => {
   return del(['dist/**'], {force: true});
@@ -58,7 +63,16 @@ gulp.task('inject-html', ['config', 'static', 'build'], () => {
     .pipe(gulp.dest('dist/src'));
 });
 
-gulp.task('dist', ['inject-html'], () => {
+gulp.task('bump-version', function () {
+  if (!commandLineArguments.type) {
+    throw Error('Need to specify bump type: `--type major|minor|patch`');
+  }
+  return gulp.src(['./package.json', './manifest.json'])
+    .pipe(bump({type: commandLineArguments.type.toLowerCase()}).on('error', gutil.log))
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('dist', ['bump-version', 'inject-html'], () => {
   gulp.src(config.keyPath)
     .pipe(gulp.dest('dist'));
 });
