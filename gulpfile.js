@@ -27,17 +27,12 @@ gulp.task('lint', () => {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('karma-test', test);
-
-gulp.task('test', ['lint'], test);
-
-gulp.task('test-no-lint', ['karma-test']);
-
-function test(done) {
-  return karma.start({
-    configFile: process.cwd() + '/karma.conf.js'
-  }, done);
-}
+gulp.task('test', ['lint'], done => {
+  return test({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true
+  }, done)
+});
 
 gulp.task('config', () => {
   return gulp.src(config.manifest)
@@ -59,7 +54,7 @@ gulp.task('build', ['lint'], (done) => {
 
 gulp.task('inject-html', ['config', 'static', 'build'], () => {
   return gulp.src('src/background.html')
-    .pipe(inject(gulp.src('dist/src/js/inject-html.js', {read: false}), {ignorePath: 'dist/'}))
+    .pipe(inject(gulp.src('dist/src/js/bundle.js', {read: false}), {ignorePath: 'dist/'}))
     .pipe(gulp.dest('dist/src'));
 });
 
@@ -72,6 +67,18 @@ gulp.task('dev', ['inject-html'], () => {
   return startWebpackBundle(true);
 });
 
+gulp.task('karma-server', done => {
+  return test({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: false,
+    autoWatch: true
+  }, done)
+});
+
+function test(options, done) {
+  return karma.start(options, done);
+}
+
 function startWebpackBundle(enableWatch, done) {
   const webpackConfig = require('./webpack.config.js');
   if (enableWatch) {
@@ -83,7 +90,7 @@ function startWebpackBundle(enableWatch, done) {
     }
     console.log("[webpack]", stats.toString({}));
 
-    gulp.src('dist/src/js/inject-html.js')
+    gulp.src('dist/src/js/bundle.js')
       .pipe(uglify())
       .pipe(gulp.dest('dist/src/js/'));
 
