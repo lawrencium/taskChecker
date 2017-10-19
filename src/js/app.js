@@ -1,9 +1,9 @@
 import * as googleTasksService from './googleTasksService';
-import * as browserIconController from './browserIconController';
+import * as iconController from './browserIconController';
 
 (function () {
   function checkTasks() {
-    googleTasksService.getOverdueTaskCount(browserIconController.handleOverdueTaskCount);
+    googleTasksService.getOverdueTaskCount(iconController.handleOverdueTaskCount, iconController.overdueTaskCountErrorHandler);
   }
 
   checkTasks();

@@ -3,10 +3,13 @@ import _ from 'lodash';
 import url from 'url';
 import moment from 'moment';
 
+/* eslint no-console: ["error", { allow: ["error"] }] */
+
 const baseUrl = 'https://www.googleapis.com/tasks/v1';
 
-export function getOverdueTaskCount(dataHandler) {
-  const taskListsPromise = getTaskLists();
+export function getOverdueTaskCount(dataHandler, errorHandler) {
+  const taskListsPromise = getTaskLists()
+    .then(asJson);
 
   return taskListsPromise
     .then(taskListJson => {
@@ -21,10 +24,12 @@ export function getOverdueTaskCount(dataHandler) {
 
             const currentDateWithoutTimezone = moment().utcOffset(0, true)
               .toISOString();
-            const queryParameters = url.format({query: {
-              showCompleted: false,
-              dueMax: currentDateWithoutTimezone
-            }});
+            const queryParameters = url.format({
+              query: {
+                showCompleted: false,
+                dueMax: currentDateWithoutTimezone
+              }
+            });
             const tasksQueryUrl = baseUrl + '/lists/' + taskListId + '/tasks' + queryParameters;
             return fetch(tasksQueryUrl, {
               method: 'GET',
@@ -39,6 +44,10 @@ export function getOverdueTaskCount(dataHandler) {
             })
             .then(numberOverdueTasks => dataHandler(numberOverdueTasks));
         });
+    })
+    .catch(err => {
+      console.error('Something went wrong...', err.toString());
+      errorHandler(err);
     });
 }
 
@@ -52,8 +61,7 @@ function getTaskLists() {
       return fetch(baseUrl + '/users/@me/lists', {
         method: 'GET',
         headers: withAuthToken
-      })
-        .then(asJson);
+      });
     });
 }
 

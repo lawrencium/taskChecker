@@ -30,20 +30,30 @@ function stubResponseFor(urlMatch, response) {
 
 describe('googleTasksServiceSpec', () => {
   describe('test getOverdueTaskCount', () => {
-    it('throws exception on 4XX status code when querying for task lists', () => {
+    it('calls error handler on 4XX status code when querying for task lists', () => {
       stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', 403);
 
-      return googleTasksService.getOverdueTaskCount(_.identity).should.be.rejectedWith('Unexpected response status ');
+      const errorHandler = sinon.spy();
+
+      return googleTasksService.getOverdueTaskCount(_.identity, errorHandler)
+        .then(() => {
+          return errorHandler.calledOnce.should.be.true;
+        });
     });
 
-    it('throws exception on 4XX status code on any tasks query', () => {
+    it('calls error handler on 4XX status code on any tasks query', () => {
       stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', {
         items: [{id: 1}, {id: 2}]
       });
       stubResponseFor('begin:https://www.googleapis.com/tasks/v1/lists/1/tasks', {});
       stubResponseFor('begin:https://www.googleapis.com/tasks/v1/lists/2/tasks', 403);
 
-      return googleTasksService.getOverdueTaskCount(_.identity).should.be.rejectedWith('Unexpected response status ');
+      const errorHandler = sinon.spy();
+
+      return googleTasksService.getOverdueTaskCount(_.identity, errorHandler)
+        .then(() => {
+          return errorHandler.calledOnce.should.be.true;
+        });
     });
 
     it('only queries for incomplete tasks', () => {

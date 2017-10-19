@@ -49,4 +49,15 @@ describe('browserIconControllerSpec', () => {
       });
     });
   });
+
+  describe('test overdueTaskCountErrorHandler', () => {
+    beforeEach(() => {
+      browerIconController.overdueTaskCountErrorHandler();
+    });
+
+    it('sets browser icon to gray', () => {
+      const matcher = sinon.match({path: sinon.match('checkmark_gray.png')});
+      return chrome.browserAction.setIcon.calledWithMatch(matcher).should.be.true;
+    });
+  });
 });

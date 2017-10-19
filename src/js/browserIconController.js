@@ -7,3 +7,7 @@ export function handleOverdueTaskCount(overdueTaskCount) {
   chrome.browserAction.setBadgeBackgroundColor({color: warningRed});
   chrome.browserAction.setIcon({path: iconPath});
 }
+
+export function overdueTaskCountErrorHandler() {
+  chrome.browserAction.setIcon({path: '/public/images/checkmark_gray.png'});
+}
