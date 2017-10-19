@@ -1,0 +1,60 @@
+@import "popup";
+
+$overdue-task-title-font-size: 17px;
+$task-title-width: $popup-width * 0.75;
+$task-due-width: $popup-width * .15;
+
+$overdue-date-font-color: #c0392b;
+$due-date-font-size: 13px;
+$grayed-out-font-color: #5a5a5a;
+
+.overdue-task {
+  font-size: $overdue-task-title-font-size;
+  padding: 5px;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background-color: $hover-main-color;
+  }
+
+  .completed {
+    text-decoration: line-through;
+    color: $grayed-out-font-color;
+  }
+
+  label {
+    padding-left: 7px;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    width: $task-title-width;
+  }
+
+  input[type="checkbox"] {
+    cursor: pointer;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .due-date-box {
+    width: $task-due-width;
+    float: right;
+    font-size: $due-date-font-size;
+
+    .caption {
+      text-align: center;
+    }
+
+    .due-date {
+      color: $overdue-date-font-color;
+      font-weight: normal;
+      &.completed {
+        color: black;
+        font-weight: lighter;
+      }
+    }
+  }
+}

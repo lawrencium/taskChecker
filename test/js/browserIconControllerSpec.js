@@ -1,9 +1,9 @@
 import chai from 'chai';
 import sinon from 'sinon';
 import chrome from 'sinon-chrome';
-import * as browerIconController from '../../src/js/browserIconController';
+import browerIconController from '../../src/js/browserIconController';
 
-chai.should();
+const { expect } = chai;
 
 describe('browserIconControllerSpec', () => {
   beforeEach(() => {
@@ -14,38 +14,38 @@ describe('browserIconControllerSpec', () => {
     chrome.flush();
   });
 
-  describe('test handleOverdueTaskCount', () => {
-    describe('= 0', () => {
+  describe('test handleOverdueTasks', () => {
+    describe('empty list', () => {
       beforeEach(() => {
-        browerIconController.handleOverdueTaskCount(0);
+        browerIconController.handleOverdueTasks([]);
       });
 
       it('sets badge text to empty string', () => {
-        return chrome.browserAction.setBadgeText.calledWithExactly({text: ''}).should.be.true;
+        return expect(chrome.browserAction.setBadgeText.calledWithExactly({ text: '' })).to.be.true;
       });
 
       it('sets browser icon to green', () => {
-        const matcher = sinon.match({path: sinon.match('checkmark_green.png')});
-        return chrome.browserAction.setIcon.calledWithMatch(matcher).should.be.true;
+        const matcher = sinon.match({ path: sinon.match('checkmark_green.png') });
+        return expect(chrome.browserAction.setIcon.calledWithMatch(matcher)).to.be.true;
       });
     });
 
-    describe('> 0', () => {
+    describe('nonempty list', () => {
       beforeEach(() => {
-        browerIconController.handleOverdueTaskCount(3);
+        browerIconController.handleOverdueTasks([{ id: 1 }, { id: 2 }, { id: 3 }]);
       });
 
       it('sets badge text to number of overdue tasks', () => {
-        return chrome.browserAction.setBadgeText.calledWithExactly({text: '3'}).should.be.true;
+        return expect(chrome.browserAction.setBadgeText.calledWithExactly({ text: '3' })).to.be.true;
       });
 
       it('sets badge text color', () => {
-        return chrome.browserAction.setBadgeBackgroundColor.calledOnce.should.be.true;
+        return expect(chrome.browserAction.setBadgeBackgroundColor.calledOnce).to.be.true;
       });
 
       it('sets browser icon to red', () => {
-        const matcher = sinon.match({path: sinon.match('checkmark_red.png')});
-        return chrome.browserAction.setIcon.calledWithMatch(matcher).should.be.true;
+        const matcher = sinon.match({ path: sinon.match('checkmark_red.png') });
+        return expect(chrome.browserAction.setIcon.calledWithMatch(matcher)).to.be.true;
       });
     });
   });
@@ -56,8 +56,8 @@ describe('browserIconControllerSpec', () => {
     });
 
     it('sets browser icon to gray', () => {
-      const matcher = sinon.match({path: sinon.match('checkmark_gray.png')});
-      return chrome.browserAction.setIcon.calledWithMatch(matcher).should.be.true;
+      const matcher = sinon.match({ path: sinon.match('checkmark_gray.png') });
+      return expect(chrome.browserAction.setIcon.calledWithMatch(matcher)).to.be.true;
     });
   });
 });

@@ -2,9 +2,10 @@
   "manifest_version": 2,
   "name": "Task Checker",
   "description": "This extension notifies the user of any due Google Tasks",
-  "version": "1.4.4",
+  "version": "2.1.0",
   "browser_action": {
-    "default_icon": "public/images/checkmark_green.png",
+    "default_icon": "public/images/checkmark_gray.png",
+    "default_popup": "src/popup.html",
     "default_title": "Task Checker"
   },
     "background": {
@@ -21,5 +22,6 @@
       "https://www.googleapis.com/auth/tasks"
     ]
   },
-  "key": "__taskChecker__key"
+  "key": "__taskChecker__key",
+  "content_security_policy": "script-src 'self' https://use.fontawesome.com https://fonts.googleapis.com; object-src 'self'"
 }
