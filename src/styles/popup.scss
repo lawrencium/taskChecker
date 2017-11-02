@@ -1,0 +1,23 @@
+$popup-width: 500px;
+
+$title-font-size: 21px;
+
+//http://www.color-hex.com/color-palette/49178
+//http://www.color-hex.com/color-palette/49176
+$main-color: #5d7287;
+$hover-main-color: #87a0ab;
+$light-text: #ecf0f1;
+$background-color: #f4f3f2;
+
+body {
+  margin: 0 0 15px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: lighter;
+  width: $popup-width;
+  background-color: $background-color;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}

@@ -3,7 +3,6 @@ const karma = require('karma').Server;
 const jsonReplace = require('gulp-json-replace');
 const del = require('del');
 const inject = require('gulp-inject');
-const uglify = require('gulp-uglify');
 const webpack = require('webpack');
 const eslint = require('gulp-eslint');
 const bump = require('gulp-bump');
@@ -23,35 +22,35 @@ const config = {
 const commandLineArguments = minimist(process.argv.slice(2));
 
 gulp.task('clean', () => {
-  return del(['dist/**'], {force: true});
+  return del(['dist/**'], { force: true });
 });
 
 gulp.task('lint', () => {
-  return gulp.src(['src/**/*.js', 'test/**/*.js'])
+  return gulp.src(['src/**/*.{js,jsx}', 'test/**/*.{js,jsx}?'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', ['lint'], done => {
+gulp.task('test', ['lint'], (done) => {
   return test({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: true
-  }, done)
+    configFile: `${__dirname}/karma.conf.js`,
+    singleRun: true,
+  }, done);
 });
 
 gulp.task('config', () => {
   return gulp.src(config.manifest)
     .pipe(jsonReplace({
       src: config.manifestConfig,
-      identify: '__taskChecker__'
+      identify: '__taskChecker__',
     }))
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('static', () => {
   return gulp.src(config.staticFileDirectories)
-    .pipe(gulp.dest('dist/public'))
+    .pipe(gulp.dest('dist/public'));
 });
 
 gulp.task('build', ['lint'], (done) => {
@@ -59,17 +58,22 @@ gulp.task('build', ['lint'], (done) => {
 });
 
 gulp.task('inject-html', ['config', 'static', 'build'], () => {
+  gulp.src('src/popup.html')
+    .pipe(inject(gulp.src('dist/src/js/popup.bundle.js', { read: false }), { ignorePath: 'dist/' }))
+    .pipe(inject(gulp.src('dist/src/styles/styles.css', { read: false }), { ignorePath: 'dist/' }))
+    .pipe(gulp.dest('dist/src'));
+
   return gulp.src('src/background.html')
-    .pipe(inject(gulp.src('dist/src/js/bundle.js', {read: false}), {ignorePath: 'dist/'}))
+    .pipe(inject(gulp.src('dist/src/js/background.bundle.js', { read: false }), { ignorePath: 'dist/' }))
     .pipe(gulp.dest('dist/src'));
 });
 
-gulp.task('bump-version', function () {
+gulp.task('bump-version', () => {
   if (!commandLineArguments.type) {
     throw Error('Need to specify bump type: `--type major|minor|patch`');
   }
   return gulp.src(['./package.json', './manifest.json'])
-    .pipe(bump({type: commandLineArguments.type.toLowerCase()}).on('error', gutil.log))
+    .pipe(bump({ type: commandLineArguments.type.toLowerCase() }).on('error', gutil.log))
     .pipe(gulp.dest('./'));
 });
 
@@ -79,21 +83,20 @@ gulp.task('dist', () => {
     'bump-version',
     'inject-html',
     () => gulp.src(config.keyPath)
-      .pipe(gulp.dest('dist'))
+      .pipe(gulp.dest('dist')),
   );
-
 });
 
 gulp.task('dev', ['inject-html'], () => {
   return startWebpackBundle(true);
 });
 
-gulp.task('karma-server', done => {
+gulp.task('karma-server', (done) => {
   return test({
-    configFile: __dirname + '/karma.conf.js',
+    configFile: `${__dirname}/karma.conf.js`,
     singleRun: false,
-    autoWatch: true
-  }, done)
+    autoWatch: true,
+  }, done);
 });
 
 function test(options, done) {
@@ -107,12 +110,11 @@ function startWebpackBundle(enableWatch, done) {
   }
   return webpack(webpackConfig, (err, stats) => {
     if (err) {
-      throw new gutil.PluginError("webpack", err);
+      throw new gutil.PluginError('webpack', err);
     }
-    console.log("[webpack]", stats.toString({}));
+    console.log('[webpack]', stats.toString({}));
 
     gulp.src('dist/src/js/bundle.js')
-      .pipe(uglify())
       .pipe(gulp.dest('dist/src/js/'));
 
     if (!enableWatch) {

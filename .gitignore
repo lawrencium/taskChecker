@@ -51,9 +51,9 @@ crashlytics-build.properties
 fabric.properties
 
 /node_modules/
-/**/key.pem
+/**/*.pem
 /dist/**
 /tmp/
 /bower_components/
-/config/config.json
+/config/config.*
 /dist.zip
