@@ -1,42 +1,35 @@
 import actionTypes from './actionTypes';
 
-function upsertOverdueTask(task) {
+function updateTask(task) {
   return {
-    type: actionTypes.UPSERT_OVERDUE_TASK,
+    type: actionTypes.UPDATE_TASK,
     task,
   };
 }
 
-function upsertOverdueTasks(tasks) {
+function setTasks(tasks) {
   return {
-    type: actionTypes.UPSERT_OVERDUE_TASKS,
+    type: actionTypes.SET_TASKS,
     tasks,
   };
 }
 
-function refreshOverdueTasks() {
+function asyncGetTasks() {
   return {
-    type: actionTypes.REFRESH_OVERDUE_TASKS,
+    type: actionTypes.ASYNC_SET_TASKS,
   };
 }
 
-function asyncUpsertOverdueTasks() {
+function asyncUpdateTask(task) {
   return {
-    type: actionTypes.ASYNC_UPSERT_OVERDUE_TASKS,
-  };
-}
-
-function asyncUpsertOverdueTask(task) {
-  return {
-    type: actionTypes.ASYNC_UPSERT_OVERDUE_TASK,
+    type: actionTypes.ASYNC_UPDATE_TASK,
     task,
   };
 }
 
 export default {
-  upsertOverdueTask: upsertOverdueTask,
-  upsertOverdueTasks: upsertOverdueTasks,
-  refreshOverdueTasks: refreshOverdueTasks,
-  asyncUpsertOverdueTasks: asyncUpsertOverdueTasks,
-  asyncUpsertOverdueTask: asyncUpsertOverdueTask,
+  updateTask: updateTask,
+  setTasks: setTasks,
+  asyncGetTasks: asyncGetTasks,
+  asyncUpdateTask: asyncUpdateTask,
 };

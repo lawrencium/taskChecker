@@ -6,7 +6,6 @@ import configureStore from 'redux-mock-store';
 import chrome from 'sinon-chrome';
 
 import Header from '../../../src/js/components/Header';
-import actions from '../../../src/js/redux/actions';
 
 const { expect } = chai;
 
@@ -20,7 +19,7 @@ configure({ adapter: new Adapter() });
 describe('<Header />', () => {
   let header;
   beforeEach(() => {
-    header = shallow(<Header store={store} />).dive();
+    header = shallow(<Header store={store} />);
   });
 
   it('returns header wrapper', () => {
@@ -30,34 +29,6 @@ describe('<Header />', () => {
   describe('.header-left', () => {
     it('has text', () => {
       return expect(header.find('.header-left').first().text()).to.not.be.empty;
-    });
-  });
-
-  describe('refresh-button', () => {
-    let refreshButton;
-    beforeEach(() => {
-      refreshButton = header.find('.refresh-button');
-    });
-
-    it('only one refresh button', () => {
-      expect(refreshButton).to.have.length(1);
-    });
-
-    describe('onClick', () => {
-      it('dispatches an `ASYNC_UPSERT_OVERDUE_TASKS`', () => {
-        refreshButton.simulate('click');
-        expect(store.getActions()).to.deep.include(actions.asyncUpsertOverdueTasks());
-      });
-
-      it('dispatches an `REFRESH_OVERDUE_TASKS`', () => {
-        refreshButton.simulate('click');
-        expect(store.getActions()).to.deep.include(actions.refreshOverdueTasks());
-      });
-
-      it('only dispatches two actions', () => {
-        refreshButton.simulate('click');
-        expect(store.getActions()).to.have.lengthOf(2);
-      });
     });
   });
 

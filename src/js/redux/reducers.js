@@ -2,21 +2,12 @@ import _ from 'lodash';
 import moment from 'moment';
 import actionTypes from './actionTypes';
 
-function overdueTasks(state = {}, action) {
+function reduceTaskActions(state = {}, action) {
   switch (action.type) {
-    case actionTypes.UPSERT_OVERDUE_TASK:
+    case actionTypes.UPDATE_TASK:
       return updateTask(_.extend({}, state), action.task);
-    case actionTypes.UPSERT_OVERDUE_TASKS:
-      return _.reduce(action.tasks, updateTask, _.extend({}, state));
-    case actionTypes.REFRESH_OVERDUE_TASKS: {
-      const mutableState = _.extend({}, state);
-      _.forEach(mutableState, (task, taskId) => {
-        if (_.isEqual(task.status, 'completed')) {
-          delete mutableState[taskId];
-        }
-      });
-      return mutableState;
-    }
+    case actionTypes.SET_TASKS:
+      return _.keyBy(action.tasks, 'id');
     default:
       return state;
   }
@@ -35,5 +26,5 @@ function updateTask(mutableState, task) {
 }
 
 export default {
-  overdueTasks: overdueTasks,
+  reduceTaskActions: reduceTaskActions,
 };

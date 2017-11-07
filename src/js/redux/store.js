@@ -6,7 +6,7 @@ import reducers from './reducers';
 import aliases from './aliases';
 
 const store = createStore(
-  reducers.overdueTasks,
+  reducers.reduceTaskActions,
   applyMiddleware(alias(aliases), thunk),
 );
 

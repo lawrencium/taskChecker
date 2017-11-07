@@ -1,6 +1,8 @@
-minify webpack bundle  for prod only (DefinePlugin for webpack (http://stackoverflow.com/questions/30030031))
-sourcemap webpack bundle dist and test
-prop-types
-readme
-license
-
+* need transformer (currently done in TasksClient)
+* provide fonts in src instead of fetching it
+* readme
+* license
+* accessibility issues
+* minify webpack bundle  for prod only (DefinePlugin for webpack (http://stackoverflow.com/questions/30030031))
+* sourcemap webpack bundle dist and test
+* prop-types

@@ -100,6 +100,8 @@ gulp.task('karma-server', (done) => {
 });
 
 function test(options, done) {
+  gutil.log('Setting timezone to UTC so that tests that require mock time will run correctly');
+  process.env.TZ = 'Europe/London';
   return karma.start(options, done);
 }
 

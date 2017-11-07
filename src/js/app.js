@@ -1,20 +1,22 @@
 import { wrapStore } from 'react-chrome-redux';
-import _ from 'lodash';
+import filter from 'lodash/filter';
+import values from 'lodash/values';
 import iconController from './browserIconController';
 import store from './redux/store';
 import actions from './redux/actions';
+import constants from './constants';
 
 /* eslint func-names: "off" */
 (function () {
   function checkTasks() {
-    store.dispatch(actions.asyncUpsertOverdueTasks());
+    store.dispatch(actions.asyncGetTasks());
   }
 
   wrapStore(store, { portName: 'TaskChecker' });
 
   store.subscribe(() => {
     const currentState = store.getState();
-    const overdueTasks = _.filter(_.values(currentState), task => _.isEqual(task.status, 'needsAction'));
+    const overdueTasks = filter(values(currentState), task => task.taskStatus === constants.TASK_STATUS.OVERDUE);
     iconController.handleOverdueTasks(overdueTasks);
   });
 

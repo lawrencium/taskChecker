@@ -17,25 +17,25 @@ describe('reducers', () => {
     param2: 23,
     updated: oneMinuteLater.toISOString(),
   };
-  describe(actionTypes.UPSERT_OVERDUE_TASK, () => {
+  describe(actionTypes.UPDATE_TASK, () => {
     it('on undefined state, returns state with single task', () => {
-      const updateAction = actions.upsertOverdueTask(task);
-      const newState = reducers.overdueTasks(undefined, updateAction);
+      const updateAction = actions.updateTask(task);
+      const newState = reducers.reduceTaskActions(undefined, updateAction);
       expect(newState).to.eql({ 101: task });
     });
 
     it('returns new state and does not mutate current state', () => {
       const startingState = { 101: task };
-      const updateAction = actions.upsertOverdueTask({ a: 'new task', updated: oneMinuteLater.toISOString() });
-      const newState = reducers.overdueTasks(startingState, updateAction);
+      const updateAction = actions.updateTask({ a: 'new task', updated: oneMinuteLater.toISOString() });
+      const newState = reducers.reduceTaskActions(startingState, updateAction);
 
       expect(newState).to.not.equal(startingState);
     });
 
     it('does not modify tasks outside of the tree', () => {
       const startingState = { 101: task };
-      const updateAction = actions.upsertOverdueTask({ id: 102, a: 'new task', updated: oneMinuteLater.toISOString() });
-      const newState = reducers.overdueTasks(startingState, updateAction);
+      const updateAction = actions.updateTask({ id: 102, a: 'new task', updated: oneMinuteLater.toISOString() });
+      const newState = reducers.reduceTaskActions(startingState, updateAction);
 
       expect(_.omit(newState, 102)).to.eql(startingState);
     });
@@ -43,8 +43,8 @@ describe('reducers', () => {
     it('replaces existing task if task in action has more recent update time', () => {
       const startingState = { 101: task };
       const updated = { id: 101, a: 'new task', updated: oneMinuteLater.toISOString() };
-      const updateAction = actions.upsertOverdueTask(updated);
-      const newState = reducers.overdueTasks(startingState, updateAction);
+      const updateAction = actions.updateTask(updated);
+      const newState = reducers.reduceTaskActions(startingState, updateAction);
 
       expect(newState).to.have.deep.property(101, updated);
     });
@@ -52,21 +52,21 @@ describe('reducers', () => {
     it('does not replace existing task if existing task has more recent update time', () => {
       const startingState = { 101: task };
       const updated = { id: 101, a: 'new task', updated: momentInTime.toISOString() };
-      const updateAction = actions.upsertOverdueTask(updated);
-      const newState = reducers.overdueTasks(startingState, updateAction);
+      const updateAction = actions.updateTask(updated);
+      const newState = reducers.reduceTaskActions(startingState, updateAction);
 
       expect(newState).to.eql(startingState);
     });
 
     it('returns original state on unknown action type', () => {
       const startingState = { 101: task };
-      const newState = reducers.overdueTasks(startingState, { type: 'unknown' });
+      const newState = reducers.reduceTaskActions(startingState, { type: 'unknown' });
 
       expect(startingState).to.equal(newState);
     });
   });
 
-  describe(actionTypes.UPSERT_OVERDUE_TASKS, () => {
+  describe(actionTypes.SET_TASKS, () => {
     const anotherTask = {
       id: taskId + 1,
       updated: momentInTime.toISOString(),
@@ -74,8 +74,8 @@ describe('reducers', () => {
     };
 
     it('on undefined state, returns state with all tasks', () => {
-      const updateAction = actions.upsertOverdueTasks([task, anotherTask]);
-      const newState = reducers.overdueTasks(undefined, updateAction);
+      const updateAction = actions.setTasks([task, anotherTask]);
+      const newState = reducers.reduceTaskActions(undefined, updateAction);
       const expectedState = {
         101: task,
         102: anotherTask,
@@ -83,26 +83,15 @@ describe('reducers', () => {
       expect(newState).to.eql(expectedState);
     });
 
-    it('only updates tasks with outdated update times', () => {
+    it('replaces tasks with tasks in action', () => {
       const startingState = { 101: task, 102: anotherTask };
-      const shouldNotUpdate = _.assign({}, task, { updated: momentInTime.toISOString() });
-      const shouldUpdate = _.assign({}, anotherTask, { updated: oneMinuteLater.toISOString() });
-      const action = actions.upsertOverdueTasks([shouldNotUpdate, shouldUpdate]);
-      const newState = reducers.overdueTasks(startingState, action);
-      expect(newState).to.have.deep.property(101, task);
-      expect(newState).to.have.deep.property(102, shouldUpdate);
-    });
-  });
+      const shouldBeUpdated = _.assign({}, anotherTask, { updated: oneMinuteLater.toISOString() });
+      const shouldAlsoBeUpdated = _.assign({}, task, { updated: momentInTime.toISOString() });
+      const action = actions.setTasks([shouldAlsoBeUpdated, shouldBeUpdated]);
+      const newState = reducers.reduceTaskActions(startingState, action);
 
-  describe(actionTypes.REFRESH_OVERDUE_TASKS, () => {
-    it('removes tasks with status `completed`', () => {
-      const startingState = { 101: _.assign({}, task, { status: 'completed' }) };
-      expect(reducers.overdueTasks(startingState, actions.refreshOverdueTasks())).to.be.empty;
-    });
-
-    it('does not remove tasks with status `needsAction`', () => {
-      const startingState = { 101: _.assign({}, task, { status: 'needsAction' }) };
-      expect(reducers.overdueTasks(startingState, actions.refreshOverdueTasks())).to.eql(startingState);
+      expect(newState).to.have.deep.property(102, shouldBeUpdated);
+      expect(newState).to.have.deep.property(101, shouldAlsoBeUpdated);
     });
   });
 });

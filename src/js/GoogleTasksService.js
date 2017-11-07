@@ -1,13 +1,10 @@
+/* eslint no-console: ["error", { allow: ["error"] }] */
 import 'whatwg-fetch';
 import _ from 'lodash';
 import url from 'url';
-import moment from 'moment';
-
-/* eslint no-console: ["error", { allow: ["error"] }] */
 
 const baseUrl = 'https://www.googleapis.com/tasks/v1';
-
-function getOverdueTasks(dataHandler, errorHandler) {
+function getTasks(query, dataHandler, errorHandler) {
   const taskListsPromise = getTaskLists()
     .then(asJson);
 
@@ -21,14 +18,8 @@ function getOverdueTasks(dataHandler, errorHandler) {
 
           const tasksQueries = _.map(taskListJson.items, (taskList) => {
             const taskListId = taskList.id;
-
-            const currentDateWithoutTimezone = moment().utcOffset(0, true)
-              .toISOString();
             const queryParameters = url.format({
-              query: {
-                showCompleted: false,
-                dueMax: currentDateWithoutTimezone,
-              },
+              query: query,
             });
             const tasksQueryUrl = `${baseUrl}/lists/${taskListId}/tasks${queryParameters}`;
             return fetch(tasksQueryUrl, {
@@ -39,10 +30,10 @@ function getOverdueTasks(dataHandler, errorHandler) {
           });
           return Promise.all(tasksQueries)
             .then((tasksQueryResponses) => {
-              const allOverdueTasks = _.flatten(_.map(tasksQueryResponses, tasksQueryResponse => tasksQueryResponse.items));
-              return _.filter(allOverdueTasks, _.isObjectLike);
+              const allTasks = _.flatten(_.map(tasksQueryResponses, tasksQueryResponse => tasksQueryResponse.items));
+              return _.filter(allTasks, _.isObjectLike);
             })
-            .then(overdueTasks => dataHandler(overdueTasks));
+            .then(tasks => dataHandler(tasks));
         });
     })
     .catch((err) => {
@@ -51,7 +42,7 @@ function getOverdueTasks(dataHandler, errorHandler) {
     });
 }
 
-function upsertTask(taskResource, dataHandler) {
+function updateTask(taskResource, dataHandler) {
   return googleAuthTokenPromise()
     .then((authToken) => {
       const withAuthTokenAndContentType = {
@@ -100,7 +91,7 @@ function asJson(response) {
 }
 
 export default {
-  getOverdueTasks: getOverdueTasks,
-  upsertTask: upsertTask,
+  updateTask: updateTask,
+  getTasks: getTasks,
 };
 

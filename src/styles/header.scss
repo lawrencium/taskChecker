@@ -1,14 +1,16 @@
 @import 'popup.scss';
 
-$logo-font-size: 35px;
+$logo-font-size: 25px;
 $small-icon-font-size: 11px;
+$header-height: 30px;
+$title-font-size: 18px;
+
 
 .header {
-  height: 40px;
+  height: $header-height;
   background-color: $main-color;
   color: $light-text;
   padding: 8px 5px;
-  margin-bottom: 10px;
 
   .header-left {
     font-size: $title-font-size;
@@ -18,18 +20,13 @@ $small-icon-font-size: 11px;
       padding: 5px 15px 5px 5px;
       vertical-align: middle;
     }
+
+    .external-link {
+      cursor: pointer;
+    }
   }
 
   .header-right {
     float: right;
-    font-size: $small-icon-font-size;
-    .small-icon-container {
-      padding: 5px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: $hover-main-color;
-      }
-    }
   }
 }

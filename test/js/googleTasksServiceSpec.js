@@ -3,7 +3,6 @@ import chrome from 'sinon-chrome';
 import sinon from 'sinon';
 import fetchMock from 'fetch-mock';
 import _ from 'lodash';
-import { fn as momentProto } from 'moment';
 import googleTasksService from '../../src/js/GoogleTasksService';
 
 chai.use(require('chai-as-promised'));
@@ -11,6 +10,7 @@ chai.use(require('chai-as-promised'));
 const { expect } = chai;
 
 const authToken = 'receivedAuthToken';
+
 beforeEach(() => {
   chrome.identity.getAuthToken.yields(authToken);
   // noinspection JSPrimitiveTypeWrapperUsage -- need to inject chrome globally
@@ -18,6 +18,7 @@ beforeEach(() => {
 });
 
 beforeEach(fetchMock.restore);
+
 afterEach(() => {
   return expect(fetchMock.done()).to.be.true;
 });
@@ -33,13 +34,13 @@ function stubResponseFor(urlMatch, response) {
 }
 
 describe('googleTasksServiceSpec', () => {
-  describe('test getOverdueTasks', () => {
+  describe('test getTasks', () => {
     it('calls error handler on 4XX status code when querying for task lists', () => {
       stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', 403);
 
       const errorHandler = sinon.spy();
 
-      return googleTasksService.getOverdueTasks(_.identity, errorHandler)
+      return googleTasksService.getTasks({}, _.identity, errorHandler)
         .then(() => {
           return expect(errorHandler.calledOnce).to.be.true;
         });
@@ -54,70 +55,49 @@ describe('googleTasksServiceSpec', () => {
 
       const errorHandler = sinon.spy();
 
-      return googleTasksService.getOverdueTasks(_.identity, errorHandler)
+      return googleTasksService.getTasks({}, _.identity, errorHandler)
         .then(() => {
           return expect(errorHandler.calledOnce).to.be.true;
         });
     });
 
-    it('only queries for incomplete tasks', () => {
-      stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', {
-        items: [{ id: 1 }],
-      });
-
-      stubResponseFor((url) => {
-        return url.startsWith('https://www.googleapis.com/tasks/v1/lists/') &&
-          url.includes('showCompleted=false');
-      }, {});
-
-      return expect(googleTasksService.getOverdueTasks(_.identity)).to.be.fulfilled;
-    });
-
-    it('only queries for overdue tasks', () => {
-      const sandbox = sinon.sandbox.create();
-      sandbox.stub(momentProto, 'utcOffset');
-
-      const fakeTime = '2017-10-15T09:00:00.000Z';
-      momentProto.utcOffset.withArgs(0, true).returns({
-        toISOString: _.constant(fakeTime),
-      });
-
+    it('encodes query parameters into uri', () => {
       stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', {
         items: [{ id: 1 }],
       });
       stubResponseFor((url) => {
-        return url.startsWith('https://www.googleapis.com/tasks/v1/lists/') && url.includes(`dueMax=${encodeURIComponent(fakeTime)}`);
+        return url.startsWith('https://www.googleapis.com/tasks/v1/lists/') && url.includes('queryParam1=someArgument');
       }, {});
 
-      return expect(googleTasksService.getOverdueTasks(_.identity)).to.be.fulfilled;
+      return expect(googleTasksService.getTasks({ queryParam1: 'someArgument' }, _.identity)).to.be.fulfilled;
     });
 
     it('returns empty list when no overdue tasks', () => {
       stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', { items: [{ id: 1 }, { id: 2 }] });
       stubResponseFor('begin:https://www.googleapis.com/tasks/v1/lists/', {});
 
-      return expect(googleTasksService.getOverdueTasks(_.identity)).to.eventually.be.empty;
+      return expect(googleTasksService.getTasks({}, _.identity)).to.eventually.be.empty;
     });
 
     it('returns list of overdue tasks across all task lists', () => {
       stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', { items: [{ id: 1 }, { id: 2 }] });
       stubResponseFor('begin:https://www.googleapis.com/tasks/v1/lists/', { items: [{ id: _.uniqueId() }] });
 
-      return expect(googleTasksService.getOverdueTasks(_.identity)).to.eventually.have.lengthOf(2);
+      return expect(googleTasksService.getTasks({}, _.identity)).to.eventually.have.lengthOf(2);
     });
 
     it('calls data handler on overdue tasks', () => {
       stubResponseFor('https://www.googleapis.com/tasks/v1/users/@me/lists', { items: [] });
 
       const dataHandler = sinon.spy();
-      return googleTasksService.getOverdueTasks(dataHandler)
+      return googleTasksService.getTasks({}, dataHandler)
         .then(() => {
           return expect(dataHandler.calledOnce).to.be.true;
         });
     });
   });
 
-  describe('test upsertTask', () => {
+  describe('test updateTask', () => {
     const urlToPut = 'someUrl';
     const taskResource = {
       selfLink: urlToPut,
@@ -136,7 +116,7 @@ describe('googleTasksServiceSpec', () => {
         },
       });
 
-      return expect(googleTasksService.upsertTask(taskResource, _.identity)).to.be.fulfilled;
+      return expect(googleTasksService.updateTask(taskResource, _.identity)).to.be.fulfilled;
     });
 
     it('request body has the same properties as the task resource', () => {
@@ -147,7 +127,7 @@ describe('googleTasksServiceSpec', () => {
         response: {},
       });
 
-      return expect(googleTasksService.upsertTask(taskResource, _.identity)).to.be.fulfilled;
+      return expect(googleTasksService.updateTask(taskResource, _.identity)).to.be.fulfilled;
     });
 
     it('rejects on 4XX status', () => {
@@ -156,7 +136,7 @@ describe('googleTasksServiceSpec', () => {
         response: 400,
       });
 
-      return expect(googleTasksService.upsertTask(taskResource, _.identity)).to.be.rejected;
+      return expect(googleTasksService.updateTask(taskResource, _.identity)).to.be.rejected;
     });
 
     it('calls dataHandler on response after successful PUT', () => {
@@ -166,7 +146,7 @@ describe('googleTasksServiceSpec', () => {
       });
 
       const dataHandler = sinon.spy();
-      return googleTasksService.upsertTask(taskResource, dataHandler)
+      return googleTasksService.updateTask(taskResource, dataHandler)
         .then(() => {
           return expect(dataHandler.calledOnce).to.be.true;
         });

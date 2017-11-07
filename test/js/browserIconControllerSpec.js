@@ -50,9 +50,9 @@ describe('browserIconControllerSpec', () => {
     });
   });
 
-  describe('test overdueTaskCountErrorHandler', () => {
+  describe('test taskCallErrorHandler', () => {
     beforeEach(() => {
-      browerIconController.overdueTaskCountErrorHandler();
+      browerIconController.taskCallErrorHandler();
     });
 
     it('sets browser icon to gray', () => {

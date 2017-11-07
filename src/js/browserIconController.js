@@ -9,11 +9,11 @@ function handleOverdueTasks(overdueTasks) {
   chrome.browserAction.setIcon({ path: iconPath });
 }
 
-function overdueTaskCountErrorHandler() {
+function taskCallErrorHandler() {
   chrome.browserAction.setIcon({ path: '/public/images/checkmark_gray.png' });
 }
 
 export default {
   handleOverdueTasks: handleOverdueTasks,
-  overdueTaskCountErrorHandler: overdueTaskCountErrorHandler,
+  taskCallErrorHandler: taskCallErrorHandler,
 };
