@@ -276,4 +276,59 @@ describe('TasksClientSpec', () => {
       });
     });
   });
+
+  describe('createTask()', () => {
+    const createTaskCall = sinon.stub(GoogleTasksService, 'createTask');
+    const createTask = {
+      title: 'some task',
+      due: '2017-12-19',
+    };
+
+    afterEach(() => {
+      createTaskCall.reset();
+    });
+
+    describe('calls `GoogleTasksService.createTask()`', () => {
+      it('once', () => {
+        TasksClient.createTask(createTask, noop);
+
+        return expect(createTaskCall.calledOnce).to.be.true;
+      });
+
+      it('with task argument due date mapped to ISO string', () => {
+        TasksClient.createTask(createTask, noop);
+        const expected = {
+          title: 'some task',
+          due: '2017-12-19T00:00:00.000Z',
+        };
+
+        return expect(createTaskCall.calledWith(expected)).to.be.true;
+      });
+
+      it('with due date undefined if task has null due date', () => {
+        const noDueDate = {
+          title: 'some task',
+          due: null,
+        };
+        TasksClient.createTask(noDueDate, noop);
+        const expected = {
+          title: 'some task',
+          due: null,
+        };
+        return expect(createTaskCall.calledWith(expected)).to.be.true;
+      });
+
+      describe('on successful create', () => {
+        describe('calls createResponseHandlerSpy', () => {
+          it('once', () => {
+            createTaskCall.yields({});
+            const createResponseHandlerSpy = sinon.spy();
+            TasksClient.createTask(createTask, createResponseHandlerSpy);
+
+            return expect(createResponseHandlerSpy.calledOnce).to.be.true;
+          });
+        });
+      });
+    });
+  });
 });

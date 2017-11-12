@@ -1,6 +1,6 @@
 @import "popup";
 
-$overdue-task-title-font-size: 15px;
+$task-title-font-size: 15px;
 
 ul {
   list-style: none;
@@ -13,7 +13,7 @@ ul {
     padding-left: 10px;
     border-bottom: 1px solid $gray-font-color;
     text-align: left;
-    font-size: $overdue-task-title-font-size;
+    font-size: $task-title-font-size;
     font-weight: bolder;
   }
 }

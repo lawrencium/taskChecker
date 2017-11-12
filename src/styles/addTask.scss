@@ -1,0 +1,72 @@
+@import "~pikaday/css/pikaday";
+@import "popup";
+@import "taskList";
+
+$add-task-paddng: 5px;
+$width-after-padding: ($popup-width - 2*$add-task-paddng);
+$add-task-font-size: $task-title-font-size + 2px;
+$add-task-title-width: $width-after-padding * 0.75;
+$add-task-buttons-width: $width-after-padding * 0.25;
+$input-height: 30px;
+
+.add-task {
+  padding: 5px 5px 0;
+  display: inline-block;
+
+  input, textarea {
+    width: inherit;
+    box-sizing: border-box;
+    height: $input-height;
+    padding-left: 2px;
+    &:focus {
+      outline: none;
+      border: 2px solid $hover-main-color;
+    }
+    resize: none;
+  }
+
+  .add-task-title-container {
+    float: left;
+    width: $add-task-title-width;
+
+    #add-task-title {
+      font-size: $add-task-font-size;
+      font-weight: lighter;
+    }
+  }
+  .add-task-buttons-container {
+    float: right;
+    width: $add-task-buttons-width;
+    position: relative;
+
+    .datepicker-container {
+      width: 65%;
+      padding-left: 2.5px;
+      padding-right: 2.5px;
+
+      #add-task-datepicker {
+        font-size: 10px;
+      }
+
+      #add-task-calendar-container {
+        float: right;
+      }
+    }
+
+    .submit-button-container {
+      width: 35%;
+
+      button {
+        position: absolute;
+        height: $input-height;
+        width: $input-height;
+        border-radius: 4px;
+        border: none;
+        margin-left: 2.5px;
+        background-color: $main-color;
+        color: $light-text;
+        cursor: pointer;
+      }
+    }
+  }
+}

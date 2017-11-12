@@ -27,9 +27,17 @@ function asyncUpdateTask(task) {
   };
 }
 
+function asyncCreateTask(task) {
+  return {
+    type: actionTypes.ASYNC_CREATE_TASK,
+    task,
+  };
+}
+
 export default {
   updateTask: updateTask,
   setTasks: setTasks,
   asyncGetTasks: asyncGetTasks,
   asyncUpdateTask: asyncUpdateTask,
+  asyncCreateTask: asyncCreateTask,
 };

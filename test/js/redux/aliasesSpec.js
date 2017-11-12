@@ -2,7 +2,6 @@ import chai from 'chai';
 import sinon from 'sinon';
 import _ from 'lodash';
 import actionTypes from '../../../src/js/redux/actionTypes';
-import GoogleTasksService from '../../../src/js/GoogleTasksService';
 import aliases from '../../../src/js/redux/aliases';
 import actions from '../../../src/js/redux/actions';
 import TasksClient from '../../../src/js/TasksClient';
@@ -57,7 +56,7 @@ describe('aliases', () => {
       updateTaskCall.reset();
     });
 
-    it('invokes `TasksClient.updateTask`', () => {
+    it('invokes `TasksClient.updateTask` once', () => {
       aliases.ASYNC_UPDATE_TASK({})(_.noop);
 
       return expect(updateTaskCall.calledOnce).to.be.true;
@@ -68,11 +67,17 @@ describe('aliases', () => {
       return expect(updateTaskCall.calledWith(taskToUpdate)).to.be.true;
     });
 
-    it('does not invoke dispatchSpy on unsuccessful update', () => {
+    it('does not invoke dispatchSpy outside of callback', () => {
       const dispatchSpy = sinon.stub();
       aliases.ASYNC_UPDATE_TASK({})(dispatchSpy);
 
       return expect(dispatchSpy.called).to.be.false;
+    });
+
+    it('passes in `task` from originalAction', () => {
+      const payload = { title: 'someTask' };
+      aliases.ASYNC_UPDATE_TASK({ task: payload })(_.noop);
+      return expect(updateTaskCall.calledWith(payload)).to.be.true;
     });
 
     describe('on successful update', () => {
@@ -93,6 +98,55 @@ describe('aliases', () => {
         aliases.ASYNC_UPDATE_TASK(updateAction)(dispatchSpy);
 
         const expectedAction = actions.updateTask(updateResponse);
+        return expect(dispatchSpy.calledWith(expectedAction)).to.be.true;
+      });
+    });
+  });
+
+  describe(actionTypes.ASYNC_CREATE_TASK, () => {
+    const createTaskCall = sinon.stub(TasksClient, 'createTask');
+    const taskToCreate = { id: 1, title: 'someTaskCreate' };
+    const createAction = actions.asyncCreateTask(taskToCreate);
+
+    afterEach(() => {
+      createTaskCall.reset();
+    });
+
+    it('invokes `TasksClient.createTask` once', () => {
+      aliases.ASYNC_CREATE_TASK({})(_.noop);
+      return expect(createTaskCall.calledOnce).to.be.true;
+    });
+
+    it('passes in `task` from originalAction', () => {
+      const payload = { title: 'someTask' };
+      aliases.ASYNC_CREATE_TASK({ task: payload })(_.noop);
+      return expect(createTaskCall.calledWith(payload)).to.be.true;
+    });
+
+    it('does not invoke dispatchSpy outside of callback', () => {
+      const dispatchSpy = sinon.stub();
+      aliases.ASYNC_CREATE_TASK({})(dispatchSpy);
+
+      return expect(dispatchSpy.called).to.be.false;
+    });
+
+    describe('on successful create', () => {
+      it('invokes dispatchSpy once', () => {
+        const dispatchSpy = sinon.stub();
+        createTaskCall.yields({});
+
+        aliases.ASYNC_CREATE_TASK(createAction)(dispatchSpy);
+        return expect(dispatchSpy.calledOnce).to.be.true;
+      });
+
+      it(`dispatches an ${actionTypes.UPDATE_TASK} action`, () => {
+        const dispatchSpy = sinon.stub();
+        const createResponse = { id: 1, title: 'created task response' };
+        createTaskCall.yields(createResponse);
+
+        aliases.ASYNC_CREATE_TASK(createAction)(dispatchSpy);
+
+        const expectedAction = actions.updateTask(createResponse);
         return expect(dispatchSpy.calledWith(expectedAction)).to.be.true;
       });
     });

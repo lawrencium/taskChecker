@@ -8,7 +8,7 @@ $overdue-date-font-color: #c0392b;
 $due-date-font-size: 13px;
 
 .overdue-task {
-  font-size: $overdue-task-title-font-size;
+  font-size: $task-title-font-size;
   padding: 5px;
   overflow: auto;
   display: flex;

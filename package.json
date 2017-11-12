@@ -1,9 +1,10 @@
 {
-  "version": "2.1.2",
+  "version": "2.2.0",
   "dependencies": {
     "classnames": "^2.2.5",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
+    "pikaday": "^1.6.1",
     "react": "^16.0.0",
     "react-chrome-redux": "^1.4.0",
     "react-dom": "^16.0.0",

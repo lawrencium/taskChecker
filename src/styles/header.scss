@@ -11,13 +11,14 @@ $title-font-size: 18px;
   background-color: $main-color;
   color: $light-text;
   padding: 8px 5px;
+  margin-bottom: 5px;
 
   .header-left {
     font-size: $title-font-size;
 
     .logo {
       font-size: $logo-font-size;
-      padding: 5px 15px 5px 5px;
+      padding: 2px 15px 5px 5px;
       vertical-align: middle;
     }
 

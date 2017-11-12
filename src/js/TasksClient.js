@@ -5,16 +5,17 @@ import browserIconController from './browserIconController';
 import constants from './constants';
 
 const getTasks = (dataHandler) => {
-  const currentTime = moment().utcOffset(0, true).toISOString();
+  const thisMoment = moment();
+  const asIsoString = thisMoment.utcOffset(0, true).toISOString();
   const overdueTasksQuery = {
     showCompleted: false,
-    dueMax: currentTime,
+    dueMax: asIsoString,
   };
 
-  const oneWeekLater = moment(currentTime).add(1, 'weeks').utcOffset(0, true).toISOString();
+  const oneWeekLater = moment(thisMoment).add(1, 'weeks').utcOffset(0, true).toISOString();
   const upcomingTaskQuery = {
     showCompleted: false,
-    dueMin: currentTime,
+    dueMin: asIsoString,
     dueMax: oneWeekLater,
   };
 
@@ -31,7 +32,7 @@ const getTasks = (dataHandler) => {
       throwIfTaskIdAppearsTwice(allTasks);
 
       const withAdditionalFields = allTasks.map((task) => {
-        return assign({}, task, { taskStatus: mapToTaskStatus(task, currentTime) });
+        return assign({}, task, { taskStatus: mapToTaskStatus(task, thisMoment) });
       });
 
       return dataHandler(withAdditionalFields);
@@ -48,6 +49,17 @@ const updateTask = (taskToUpdate, updateResponseHandler) => {
     const withAdditionalFields = assign({}, updateResponse, { taskStatus: mapToTaskStatus(updateResponse, moment()) });
 
     updateResponseHandler(withAdditionalFields);
+  });
+};
+
+const createTask = (taskToCreate, createResponseHandler) => {
+  const dueDateAsMoment = taskToCreate.due && moment(taskToCreate.due);
+  const asIsoString = dueDateAsMoment && dueDateAsMoment.utcOffset(0, true).toISOString();
+  const withCorrectTime = assign({}, taskToCreate, { due: asIsoString });
+  return GoogleTasksService.createTask(withCorrectTime, (createResponse) => {
+    const withAdditionalFields = assign({}, createResponse, { taskStatus: mapToTaskStatus(createResponse, moment()) });
+
+    createResponseHandler(withAdditionalFields);
   });
 };
 
@@ -73,4 +85,5 @@ const unmapTaskStatus = (task) => {
 export default {
   getTasks: getTasks,
   updateTask: updateTask,
+  createTask: createTask,
 };

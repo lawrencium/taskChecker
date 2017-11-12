@@ -8,6 +8,7 @@ const asyncSetTasks = () => {
     });
   };
 };
+
 const asyncUpdateTask = (originalAction) => {
   const taskToUpdate = originalAction.task;
   return (dispatch) => {
@@ -17,7 +18,17 @@ const asyncUpdateTask = (originalAction) => {
   };
 };
 
+const asyncCreateTask = (originalAction) => {
+  return (dispatch) => {
+    return TasksClient.createTask(originalAction.task, (createResponse) => {
+      dispatch(actions.updateTask(createResponse));
+    });
+  };
+};
+
+
 export default {
   ASYNC_SET_TASKS: asyncSetTasks,
   ASYNC_UPDATE_TASK: asyncUpdateTask,
+  ASYNC_CREATE_TASK: asyncCreateTask,
 };

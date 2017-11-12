@@ -45,4 +45,15 @@ describe('actions', () => {
       expect(actions.asyncUpdateTask(payload)).to.have.deep.property('task', payload);
     });
   });
+
+  describe(actionTypes.ASYNC_CREATE_TASK, () => {
+    it('has the correct type', () => {
+      expect(actions.asyncCreateTask()).to.have.property('type', 'ASYNC_CREATE_TASK');
+    });
+
+    it('has `task` payload', () => {
+      const payload = { title: 'someTaskToUpsert', param: 'something else' };
+      expect(actions.asyncCreateTask(payload)).to.have.property('task', payload);
+    });
+  });
 });

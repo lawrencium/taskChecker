@@ -1,9 +1,10 @@
 /* eslint no-console: ["error", { allow: ["error"] }] */
 import 'whatwg-fetch';
-import _ from 'lodash';
+import { filter, flatten, isObjectLike, map } from 'lodash';
 import url from 'url';
 
 const baseUrl = 'https://www.googleapis.com/tasks/v1';
+
 function getTasks(query, dataHandler, errorHandler) {
   const taskListsPromise = getTaskLists()
     .then(asJson);
@@ -16,7 +17,7 @@ function getTasks(query, dataHandler, errorHandler) {
             Authorization: `Bearer ${authToken}`,
           };
 
-          const tasksQueries = _.map(taskListJson.items, (taskList) => {
+          const tasksQueries = map(taskListJson.items, (taskList) => {
             const taskListId = taskList.id;
             const queryParameters = url.format({
               query: query,
@@ -30,8 +31,8 @@ function getTasks(query, dataHandler, errorHandler) {
           });
           return Promise.all(tasksQueries)
             .then((tasksQueryResponses) => {
-              const allTasks = _.flatten(_.map(tasksQueryResponses, tasksQueryResponse => tasksQueryResponse.items));
-              return _.filter(allTasks, _.isObjectLike);
+              const allTasks = flatten(map(tasksQueryResponses, tasksQueryResponse => tasksQueryResponse.items));
+              return filter(allTasks, isObjectLike);
             })
             .then(tasks => dataHandler(tasks));
         });
@@ -57,6 +58,24 @@ function updateTask(taskResource, dataHandler) {
       })
         .then(asJson)
         .then(updatedTask => dataHandler(updatedTask));
+    });
+}
+
+function createTask(taskResource, dataHandler) {
+  return googleAuthTokenPromise()
+    .then((authToken) => {
+      const withAuthTokenAndContentType = {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      };
+
+      return fetch(`${baseUrl}/lists/@default/tasks`, {
+        method: 'POST',
+        headers: withAuthTokenAndContentType,
+        body: JSON.stringify(taskResource),
+      })
+        .then(asJson)
+        .then(createdTask => dataHandler(createdTask));
     });
 }
 
@@ -93,5 +112,6 @@ function asJson(response) {
 export default {
   updateTask: updateTask,
   getTasks: getTasks,
+  createTask: createTask,
 };
 

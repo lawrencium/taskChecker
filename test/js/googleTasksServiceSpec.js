@@ -152,4 +152,57 @@ describe('googleTasksServiceSpec', () => {
         });
     });
   });
+
+  describe('createTask()', () => {
+    const createdTask = {
+      title: 'blah blah blah',
+    };
+    const urlToPost = 'https://www.googleapis.com/tasks/v1/lists/@default/tasks';
+
+    it('sends POST request to @default task list with auth token and content-type headers', () => {
+      fetchMock.postOnce({
+        matcher: urlToPost,
+        response: {},
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return expect(googleTasksService.createTask(createdTask, _.identity)).to.be.fulfilled;
+    });
+
+    it('request body has the same properties as the task resource', () => {
+      fetchMock.postOnce({
+        matcher: (url, opts) => {
+          return _.isEqual(JSON.parse(opts.body), createdTask);
+        },
+        response: {},
+      });
+
+      return expect(googleTasksService.createTask(createdTask, _.identity)).to.be.fulfilled;
+    });
+
+    it('rejects on 4XX status', () => {
+      fetchMock.postOnce({
+        matcher: urlToPost,
+        response: 400,
+      });
+
+      return expect(googleTasksService.createTask(createdTask, _.identity)).to.be.rejected;
+    });
+
+    it('calls dataHandler on response after successful PUT', () => {
+      fetchMock.postOnce({
+        matcher: urlToPost,
+        response: { some: 'response' },
+      });
+
+      const dataHandler = sinon.spy();
+      return googleTasksService.createTask(createdTask, dataHandler)
+        .then(() => {
+          return expect(dataHandler.calledOnce).to.be.true;
+        });
+    });
+  });
 });
