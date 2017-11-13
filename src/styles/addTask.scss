@@ -18,6 +18,7 @@ $input-height: 30px;
     box-sizing: border-box;
     height: $input-height;
     padding-left: 2px;
+    border: 1px solid $hover-main-color;
     &:focus {
       outline: none;
       border: 2px solid $hover-main-color;

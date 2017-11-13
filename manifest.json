@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Task Checker",
   "description": "This extension notifies the user of any due Google Tasks",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "browser_action": {
     "default_icon": "public/images/checkmark_gray.png",
     "default_popup": "src/popup.html",
