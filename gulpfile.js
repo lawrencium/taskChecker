@@ -15,7 +15,7 @@ const config = {
   keyPath: 'config/key.pem',
   manifest: 'manifest.json',
   manifestConfig: 'config/config.json',
-  staticFileDirectories: 'public/**/*',
+  staticFileDirectories: 'public/images/*',
 
 };
 
@@ -50,7 +50,7 @@ gulp.task('config', () => {
 
 gulp.task('static', () => {
   return gulp.src(config.staticFileDirectories)
-    .pipe(gulp.dest('dist/public'));
+    .pipe(gulp.dest('dist/public/images'));
 });
 
 gulp.task('build', ['lint'], (done) => {
