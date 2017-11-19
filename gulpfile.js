@@ -36,13 +36,14 @@ gulp.task('test', ['lint'], (done) => {
   }, done);
 });
 
-gulp.task('config', () => {
+gulp.task('config', (done) => {
   const exec = require('child_process').exec;
   exec('mkdir dist', (err) => {
     console.log('mkdir dist', err);
-  });
-  exec('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', (err) => {
-    console.log('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', err);
+    exec('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', (err) => {
+      console.log('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', err);
+      done();
+    });
   });
 });
 
