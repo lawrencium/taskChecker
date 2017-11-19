@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 echo "Beginning deployment process"
-echo 'app_id'  $APP_ID
 
 echo "Packaging app..."
 gulp package
