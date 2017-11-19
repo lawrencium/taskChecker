@@ -1,7 +1,15 @@
 language: node_js
 node_js:
-  - "8"
+- '8'
 install: npm install
 before_script:
-  - npm install -g gulp-cli
+- npm install -g gulp-cli
 script: gulp test
+deploy:
+  provider: script
+  script: ./deployToWebStore.sh
+  on:
+    branch: develop
+env:
+  global:
+    secure: KBrW1ZUIxnneoxmdQOm4SaMuZ+G+TpvwCDxXRs8lrQ3KBMcSC0W7gTV7OFl3AUE+J9wMXoVl4Rh3qWm6lk6ENtSnjMM3JmVFqLllyMQQMGin3GOsCx36rJleRgPSUbg3fDVP6wchyTPJw2Mh9wKYPIRvU8HViusbYcxdjeuVz0tSHcLJxcbmH0CIAiXGqm79Xfdojrk7ZTpF1UJGMBZWTJ43WOv+41nYEJR3cb/S2LYY5MWH6UrVa3gS7EIawr7yOYi3ePjEdkZfmsmDJzPNjyRD71mvg7cuH2EkN8UFJeAEqWjgbOGeoxzju5K7GK6L0ACGV8rcFgDFSt6Nyy99E19V7AAyGe4PYW5+1r7tKOvR8xcRwIK7Zx2MBOAXHt9XzBe2prrecKf3H3f9A1lXSYO3ExK/dcITOANktbpKrleTkVuHHA/LKOCZjwjyxp+UsclL2zMDd/3Hzw0gZ6dCXZzvPpBAQjXaWo9BK+BVwCkB9ApqSEbc2lMPZZeSnZfP7EWKHSzusDXx82elUo+Jc3Y5l0qHQKBh29Lm59REBtmdboKkK4k8BHsTXdzXreHdxPIpSNA4861p7v1pBP2uUuXpG6xn0/jHXKe0t8BvIwpxinmB/cnrnUO+YneAGlr1QI9NV0+ff/3dn6qz6m6iJqJ6TGaeUISTi0G5lGCTJb8=
