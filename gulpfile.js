@@ -1,6 +1,5 @@
 const gulp = require('gulp');
 const karma = require('karma').Server;
-const jsonReplace = require('gulp-json-replace');
 const del = require('del');
 const inject = require('gulp-inject');
 const webpack = require('webpack');
@@ -12,9 +11,7 @@ const runSequence = require('run-sequence');
 
 const config = {
   testDirectory: ['test/**/*[sS]pec.js'],
-  keyPath: 'config/key.pem',
   manifest: 'manifest.json',
-  manifestConfig: 'config/config.json',
   staticFileDirectories: 'public/images/*',
 
 };
@@ -40,12 +37,13 @@ gulp.task('test', ['lint'], (done) => {
 });
 
 gulp.task('config', () => {
-  return gulp.src(config.manifest)
-    .pipe(jsonReplace({
-      src: config.manifestConfig,
-      identify: '__taskChecker__',
-    }))
-    .pipe(gulp.dest('dist'));
+  const exec = require('child_process').exec;
+  exec('mkdir dist', (err) => {
+    console.log('mkdir dist', err);
+  });
+  exec('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', (err) => {
+    console.log('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', err);
+  });
 });
 
 gulp.task('static', () => {
@@ -57,15 +55,22 @@ gulp.task('build', ['lint'], (done) => {
   return startWebpackBundle(false, done);
 });
 
-gulp.task('inject-html', ['config', 'static', 'build'], () => {
-  gulp.src('src/popup.html')
-    .pipe(inject(gulp.src('dist/src/js/popup.bundle.js', { read: false }), { ignorePath: 'dist/' }))
-    .pipe(inject(gulp.src('dist/src/styles/styles.css', { read: false }), { ignorePath: 'dist/' }))
-    .pipe(gulp.dest('dist/src'));
+gulp.task('package', () => {
+  runSequence(
+    'config',
+    'static',
+    'build',
+    () => {
+      gulp.src('src/popup.html')
+        .pipe(inject(gulp.src('dist/src/js/popup.bundle.js', { read: false }), { ignorePath: 'dist/' }))
+        .pipe(inject(gulp.src('dist/src/styles/styles.css', { read: false }), { ignorePath: 'dist/' }))
+        .pipe(gulp.dest('dist/src'));
 
-  return gulp.src('src/background.html')
-    .pipe(inject(gulp.src('dist/src/js/background.bundle.js', { read: false }), { ignorePath: 'dist/' }))
-    .pipe(gulp.dest('dist/src'));
+      return gulp.src('src/background.html')
+        .pipe(inject(gulp.src('dist/src/js/background.bundle.js', { read: false }), { ignorePath: 'dist/' }))
+        .pipe(gulp.dest('dist/src'));
+    }
+  );
 });
 
 gulp.task('bump-version', () => {
@@ -81,13 +86,11 @@ gulp.task('dist', () => {
   runSequence(
     'clean',
     'bump-version',
-    'inject-html',
-    () => gulp.src(config.keyPath)
-      .pipe(gulp.dest('dist')),
+    'package'
   );
 });
 
-gulp.task('dev', ['inject-html'], () => {
+gulp.task('dev', ['package'], () => {
   return startWebpackBundle(true);
 });
 

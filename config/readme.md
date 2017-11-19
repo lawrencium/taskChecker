@@ -1,6 +1,1 @@
-{
-  "manifest.json": {
-    "clientId": "XXX",
-    "key": "XXX"
-  }
-}
+CLIENT_ID=405889148522-dvlql2ojksd68hk58cil0hc92f1bto8g.apps.googleusercontent.com

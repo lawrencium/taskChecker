@@ -1,5 +1,5 @@
 {
-  "version": "2.2.2",
+  "version": "2.2.6",
   "dependencies": {
     "classnames": "^2.2.5",
     "lodash": "^4.17.4",
@@ -37,7 +37,6 @@
     "gulp-bump": "^2.8.0",
     "gulp-eslint": "^4.0.0",
     "gulp-inject": "^4.3.0",
-    "gulp-json-replace": "^1.0.9",
     "gulp-replace": "^0.6.1",
     "gutil": "^1.6.4",
     "karma": "^1.7.1",
