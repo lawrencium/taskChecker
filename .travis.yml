@@ -10,7 +10,9 @@ deploy:
   provider: script
   script: ./deployToWebStore.sh
   on:
-    branch: develop
+    branch:
+      - develop
+      - master
 env:
   CLIENT_ID=405889148522-dvlql2ojksd68hk58cil0hc92f1bto8g.apps.googleusercontent.com
   APP_ID=ndfeidokhhlghgiccjolgigajeomjjom
