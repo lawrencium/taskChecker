@@ -30,7 +30,7 @@ This app syncs with the Google API every minute for any updates to your task lis
 
 
 ## Running the code
-1. Make sure you have gulp and npm installed </li>
+1. Make sure you have gulp and npm installed. You'll also need to be able to run `sed`, `jq`, and `mkdir` from the command line.
 2. To run the app, you will need to have the environment variables specified in the `config/readme`. For development purposes, you can use the `CLIENT_ID` specified in the `config/readme.md` file  
     * To set an environment variable run the following command in a bash environment:
       > export \<environment key>=\<variable here>

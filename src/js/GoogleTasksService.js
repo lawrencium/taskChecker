@@ -94,8 +94,14 @@ function getTaskLists() {
 }
 
 function googleAuthTokenPromise() {
-  return new Promise((resolve) => {
-    chrome.identity.getAuthToken({ interactive: true }, resolve);
+  return new Promise((resolve, reject) => {
+    chrome.identity.getAuthToken({ interactive: true }, (token) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError));
+      } else {
+        resolve(token);
+      }
+    });
   });
 }
 
