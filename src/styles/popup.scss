@@ -5,7 +5,6 @@ $popup-width: 450px;
 $main-color: #5d7287;
 $hover-main-color: #87a0ab;
 $light-text: #ecf0f1;
-$background-color: #f4f3f2;
 $grayed-out-font-color: #7a7a7a;
 $gray-font-color: #4a4a4a;
 
@@ -14,6 +13,5 @@ body {
   font-family: 'Open Sans', sans-serif;
   font-weight: lighter;
   width: $popup-width;
-  background-color: $background-color;
   color: $gray-font-color;
 }

@@ -16,14 +16,18 @@ $input-height: 30px;
   input, textarea {
     width: inherit;
     box-sizing: border-box;
+    border-radius: 4px;
     height: $input-height;
-    padding-left: 2px;
+    min-height: $input-height;
+    padding-left: 5px;
+    padding-top: 4px;
     border: 1px solid $hover-main-color;
+    resize: vertical;
+
     &:focus {
       outline: none;
       border: 2px solid $hover-main-color;
     }
-    resize: none;
   }
 
   .add-task-title-container {
@@ -42,11 +46,12 @@ $input-height: 30px;
 
     .datepicker-container {
       width: 65%;
-      padding-left: 2.5px;
+      padding-left: 5px;
       padding-right: 2.5px;
 
       #add-task-datepicker {
         font-size: 10px;
+        padding-bottom: 4px;
       }
 
       #add-task-calendar-container {

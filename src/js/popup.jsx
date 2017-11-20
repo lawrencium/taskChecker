@@ -29,4 +29,19 @@ store.ready().then(() => {
     </Provider>,
     document.getElementById('root'),
   );
+  resizePopupWindow();
 });
+
+
+const resizePopupWindow = () => {
+  // Chrome extensions have a bug where sometimes the popup is not drawn to the right size. The below hack forces
+  // Chrome to re-draw the popup by changing the width of the popup window. The width should be taken from `popup.scss`
+  // from the $popup-width variable.
+  setTimeout(() => {
+    document.getElementsByTagName('body')[0].style.width = '451px';
+  }, 180);
+
+  setTimeout(() => {
+    document.getElementsByTagName('body')[0].style.width = '450px';
+  }, 200);
+};

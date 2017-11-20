@@ -55,5 +55,5 @@ fabric.properties
 /dist/**
 /tmp/
 /bower_components/
-/config/.config
+/config/.*.config
 /dist.zip

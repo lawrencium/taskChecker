@@ -5,6 +5,13 @@ install: npm install
 before_script:
 - npm install -g gulp-cli
 script: gulp test
+
+before_deploy:
+  - test $TRAVIS_TEST_RESULT = 0
+  - if [[ $TRAVIS_BRANCH == 'master' ]]; then export CLIENT_ID=${PROD_CLIENT_ID} && export APP_ID=${PROD_APP_ID}; fi
+  - if [[ $TRAVIS_BRANCH == 'develop' ]]; then export CLIENT_ID=${DEV_CLIENT_ID} && export APP_ID=${DEV_APP_ID}; fi
+
+
 deploy:
   skip_cleanup: true
   provider: script
@@ -14,5 +21,7 @@ deploy:
       - develop
       - master
 env:
-  CLIENT_ID=405889148522-dbeip54l7acipb7ruq5f964srqom9qqo.apps.googleusercontent.com
-  APP_ID=emeajcjikgmcekalbihnnjlbpeaipjjn
+  PROD_CLIENT_ID=405889148522-dbeip54l7acipb7ruq5f964srqom9qqo.apps.googleusercontent.com
+  PROD_APP_ID=emeajcjikgmcekalbihnnjlbpeaipjjn
+  DEV_CLIENT_ID=405889148522-dvlql2ojksd68hk58cil0hc92f1bto8g.apps.googleusercontent.com
+  DEV_APP_ID=ndfeidokhhlghgiccjolgigajeomjjom

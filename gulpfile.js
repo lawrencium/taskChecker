@@ -8,6 +8,7 @@ const bump = require('gulp-bump');
 const minimist = require('minimist');
 const gutil = require('gulp-util');
 const runSequence = require('run-sequence');
+const exec = require('child_process').exec;
 
 const config = {
   testDirectory: ['test/**/*[sS]pec.js'],
@@ -37,10 +38,9 @@ gulp.task('test', ['lint'], (done) => {
 });
 
 gulp.task('config', (done) => {
-  const exec = require('child_process').exec;
-  exec('mkdir dist', (err) => {
+  return exec('mkdir dist', (err) => {
     console.log('mkdir dist', err);
-    exec('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', (err) => {
+    return exec('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', (err) => {
       console.log('sed "s/__taskChecker__clientId/${CLIENT_ID}/g" manifest.json > dist/manifest.json', err);
       done();
     });
@@ -56,8 +56,8 @@ gulp.task('build', ['lint'], (done) => {
   return startWebpackBundle(false, done);
 });
 
-gulp.task('package', () => {
-  runSequence(
+gulp.task('package', (done) => {
+  return runSequence(
     'config',
     'static',
     'build',
@@ -67,9 +67,10 @@ gulp.task('package', () => {
         .pipe(inject(gulp.src('dist/src/styles/styles.css', { read: false }), { ignorePath: 'dist/' }))
         .pipe(gulp.dest('dist/src'));
 
-      return gulp.src('src/background.html')
+      gulp.src('src/background.html')
         .pipe(inject(gulp.src('dist/src/js/background.bundle.js', { read: false }), { ignorePath: 'dist/' }))
         .pipe(gulp.dest('dist/src'));
+      done();
     }
   );
 });
@@ -92,6 +93,9 @@ gulp.task('dist', () => {
 });
 
 gulp.task('dev', ['package'], () => {
+  exec('jq ".key=\\\"${CLIENT_KEY}\\\"" dist/manifest.json > tmp && mv tmp dist/manifest.json', (err) => {
+    console.log('jq ".key=\"${CLIENT_KEY}\"" dist/manifest.json', err);
+  });
   return startWebpackBundle(true);
 });
 

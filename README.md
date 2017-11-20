@@ -31,9 +31,9 @@ This app syncs with the Google API every minute for any updates to your task lis
 
 ## Running the code
 1. Make sure you have gulp and npm installed </li>
-2. To run the app, you will need to have a `CLIENT_ID` environment variable. For development purposes, you can use the `CLIENT_ID` specified in the `config/readme.md` file  
+2. To run the app, you will need to have the environment variables specified in the `config/readme`. For development purposes, you can use the `CLIENT_ID` specified in the `config/readme.md` file  
     * To set an environment variable run the following command in a bash environment:
-      > export CLIENT_ID=\<client id here>
+      > export \<environment key>=\<variable here>
 3. `npm install` to install project dependencies
 4. `gulp test` to lint & make sure the tests pass
 5. `gulp dev` will create a `dist/` folder containing the bundled app that can then be loaded into a Google Chrome browser. Instructions [here](https://developer.chrome.com/extensions/getstarted#unpacked). `gulp dev` will watch your javascript files for changes and automatically update `dist/` with the latest changes -- for HTML changes, you'll have to rerun `gulp dev`
