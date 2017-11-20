@@ -17,6 +17,10 @@ beforeEach(() => {
   global.chrome = chrome;
 });
 
+afterEach(() => {
+  chrome.flush();
+});
+
 beforeEach(fetchMock.restore);
 
 afterEach(() => {
@@ -52,6 +56,17 @@ describe('googleTasksServiceSpec', () => {
       });
       stubResponseFor('begin:https://www.googleapis.com/tasks/v1/lists/1/tasks', {});
       stubResponseFor('begin:https://www.googleapis.com/tasks/v1/lists/2/tasks', 403);
+
+      const errorHandler = sinon.spy();
+
+      return googleTasksService.getTasks({}, _.identity, errorHandler)
+        .then(() => {
+          return expect(errorHandler.calledOnce).to.be.true;
+        });
+    });
+
+    it('rejects if chrome.runtime.lastError is truthy when calling `chrome.identity.getAuthToken`', () => {
+      chrome.runtime.lastError = { message: 'some error occurred' };
 
       const errorHandler = sinon.spy();
 

@@ -1,5 +1,5 @@
 {
-  "version": "2.2.12",
+  "version": "2.2.13",
   "dependencies": {
     "classnames": "^2.2.5",
     "lodash": "^4.17.4",
