@@ -7,7 +7,7 @@ const Header = () => {
     <header className="header">
       <span className="header-left">
         <i className="fa fa-check-circle logo external-link" onClick={linkToGoogleTasksUrl} />
-        &quot;A cluttered todo list is a cluttered mind&quot;
+        &quot;A cluttered to-do list is a cluttered mind&quot;
       </span>
       <span className="header-right" />
     </header>
