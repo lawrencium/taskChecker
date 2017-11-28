@@ -2,9 +2,12 @@ import React from 'react';
 import moment from 'moment';
 import Pikaday from 'pikaday';
 import { connect } from 'react-redux';
+import { values } from 'lodash';
+import classNames from 'classnames';
 
 import '../../styles/addTask.scss';
 import actions from '../redux/actions';
+import constants from '../constants';
 
 class AddTask extends React.Component {
   constructor(props) {
@@ -62,7 +65,7 @@ class AddTask extends React.Component {
             <div id="add-task-calendar-container" />
           </span>
           <span className="submit-button-container">
-            <button onClick={this.submitTask} className="fa fa-plus" />
+            <button onClick={this.submitTask} className={classNames('fa fa-plus', { overdue: this.props.hasOverdueTasks })} />
           </span>
         </span>
       </div>
@@ -78,4 +81,12 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(AddTask);
+const mapStateToProps = (state) => {
+  const tasks = values(state);
+  const hasOverdueTasks = tasks.some(task => task.taskStatus === constants.TASK_STATUS.OVERDUE);
+  return {
+    hasOverdueTasks,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddTask);

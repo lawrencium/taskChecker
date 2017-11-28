@@ -7,6 +7,7 @@ import configureStore from 'redux-mock-store';
 
 import AddTask from '../../../src/js/components/AddTask';
 import actions from '../../../src/js/redux/actions';
+import constants from '../../../src/js/constants';
 
 const { expect } = chai;
 configure({ adapter: new Adapter() });
@@ -58,6 +59,19 @@ describe('<AddTask />', () => {
 
       const expected = moment('2017-12-19');
       expect(addTaskWrapper.state('due')).to.eql(expected);
+    });
+  });
+
+  describe('submit button', () => {
+    it('has `overdue` class if there are overdue tasks', () => {
+      store = mockStore({ 1: { taskStatus: constants.TASK_STATUS.OVERDUE } });
+      const withOverdueTasks = shallow(<AddTask store={store} />).dive();
+
+      return expect(withOverdueTasks.find('button.overdue')).to.have.lengthOf(1);
+    });
+
+    it('has no `overdue` class if no overdue tasks', () => {
+      return expect(addTaskWrapper.find('button.overdue')).to.have.lengthOf(0);
     });
   });
 

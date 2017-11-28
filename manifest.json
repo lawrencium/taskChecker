@@ -1,17 +1,21 @@
 {
   "manifest_version": 2,
   "name": "Task Checker",
-  "description": "This extension notifies the user of any due Google Tasks",
-  "version": "2.2.13",
+  "description": "Get a button on your browser toolbar that you can click to see your Google Tasks, without ever leaving your page.",
+  "version": "2.3.0",
   "browser_action": {
     "default_icon": "public/images/checkmark_gray.png",
     "default_popup": "src/popup.html",
     "default_title": "Task Checker"
   },
-    "background": {
-      "page": "src/background.html",
-      "persistent": false
-    },
+  "background": {
+    "page": "src/background.html",
+    "persistent": false
+  },
+  "icons": {
+    "48": "public/images/checkmark_icon_48.png",
+    "128": "public/images/checkmark_icon_128.png"
+  },
   "permissions": [
     "identity",
     "alarms"
