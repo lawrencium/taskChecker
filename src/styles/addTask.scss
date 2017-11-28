@@ -63,13 +63,16 @@ $input-height: 30px;
       width: 35%;
 
       button {
+        &.overdue {
+         background-color: $main-color-with-overdue;
+        }
         position: absolute;
         height: $input-height;
         width: $input-height;
         border-radius: 4px;
         border: none;
         margin-left: 2.5px;
-        background-color: $main-color;
+        background-color: $main-color-no-overdue;
         color: $light-text;
         cursor: pointer;
       }

@@ -7,8 +7,11 @@ $title-font-size: 17px;
 
 
 .header {
+  &.overdue {
+    background-color: $main-color-with-overdue;
+  }
   height: $header-height;
-  background-color: $main-color;
+  background-color: $main-color-no-overdue;
   color: $light-text;
   padding: 8px 5px;
   margin-bottom: 5px;

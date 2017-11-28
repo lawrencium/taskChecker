@@ -6,6 +6,7 @@ import configureStore from 'redux-mock-store';
 import chrome from 'sinon-chrome';
 
 import Header from '../../../src/js/components/Header';
+import constants from '../../../src/js/constants';
 
 const { expect } = chai;
 
@@ -19,11 +20,22 @@ configure({ adapter: new Adapter() });
 describe('<Header />', () => {
   let header;
   beforeEach(() => {
-    header = shallow(<Header store={store} />);
+    header = shallow(<Header store={store} />).dive();
   });
 
   it('returns header wrapper', () => {
     expect(header.find('header.header')).to.have.length(1);
+  });
+
+  it('header does not have `overdue` class if no overdue tasks', () => {
+    expect(header.find('header.header.overdue')).to.have.length(0);
+  });
+
+  it('header has `overdue` class if there are overdue tasks', () => {
+    store = mockStore({ 1: { taskStatus: constants.TASK_STATUS.OVERDUE } });
+    const overdueHeader = shallow(<Header store={store} />).dive();
+
+    expect(overdueHeader.find('header.header.overdue')).to.have.length(1);
   });
 
   describe('.header-left', () => {

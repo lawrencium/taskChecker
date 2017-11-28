@@ -5,7 +5,7 @@
 
 [![Build Status](https://travis-ci.org/lawrencium/taskChecker.svg?branch=master)](https://travis-ci.org/lawrencium/taskChecker)
 
-![screenshot](public/promotional/large_tile.jpeg)
+![screenshot](public/promotional/large_tile.png)
 
 
 ### Easily manage your Google Tasks
@@ -15,8 +15,7 @@ The button turns red to notify you whenever you have an overdue task.
 
 
 ## Features
-![screenshot](public/promotional/screenshot_closeup_overdue.png)
-![screenshot](public/promotional/screenshot_no_overdue.png)
+![screenshot](public/promotional/screenshot3.png)
 
 #### Browser toolbar button
 Get a quick glimpse into your tasks status. A green icon means you don't have any overdue tasks. A red icon means you have an overdue task. It will also display a badge with the number of overdue tasks you need to complete.
