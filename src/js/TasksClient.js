@@ -12,11 +12,11 @@ const getTasks = (dataHandler) => {
     dueMax: asIsoString,
   };
 
-  const oneWeekLater = moment(thisMoment).add(1, 'weeks').utcOffset(0, true).toISOString();
+  const oneMonthLater = moment(thisMoment).add(1, 'months').utcOffset(0, true).toISOString();
   const upcomingTaskQuery = {
     showCompleted: false,
     dueMin: asIsoString,
-    dueMax: oneWeekLater,
+    dueMax: oneMonthLater,
   };
 
   return Promise.all([

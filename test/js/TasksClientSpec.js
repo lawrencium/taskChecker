@@ -56,11 +56,11 @@ describe('TasksClientSpec', () => {
         it('for upcoming tasks', () => {
           TasksClient.getTasks(noop);
 
-          const oneWeekLater = '2017-12-26T09:00:00.000Z';
+          const oneMonthLater = '2018-01-19T09:00:00.000Z';
           return expect(getTasksCall.calledWith({
             showCompleted: false,
             dueMin: currentFakeTime,
-            dueMax: oneWeekLater,
+            dueMax: oneMonthLater,
           })).to.be.true;
         });
 
