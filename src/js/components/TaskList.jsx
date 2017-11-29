@@ -37,14 +37,14 @@ class TaskList extends React.Component {
       <div>
         <ul>
           {!isEmpty(this.props.overdueTasks) &&
-          <div className="list-title">Overdue Tasks</div>}
+          <div className="list-title">Overdue tasks</div>}
 
           {this.createOverdueTasks()}
         </ul>
 
         <ul>
           {!isEmpty(this.props.upcomingTasks) &&
-            <div className="list-title">Upcoming Tasks</div>}
+            <div className="list-title">The upcoming month</div>}
 
           {this.createUpcomingTasks()}
         </ul>
