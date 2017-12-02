@@ -22,7 +22,11 @@ beforeEach(() => {
 describe('<Task />', () => {
   let taskComponent;
   const task = {
-    id: '1', title: 'taskTitle', taskStatus: constants.TASK_STATUS.COMPLETED, due: '2017-10-01T00:00:00.000Z',
+    id: '1',
+    title: 'taskTitle',
+    taskStatus: constants.TASK_STATUS.COMPLETED,
+    due: '2017-10-01T00:00:00.000Z',
+    notes: 'task notes go here',
   };
   beforeEach(() => {
     taskComponent = shallow(<Task task={task} store={store} />).dive();
@@ -30,6 +34,14 @@ describe('<Task />', () => {
 
   it('creates wrapping li on render()', () => {
     return expect(taskComponent.first().is('li')).to.be.true;
+  });
+
+  it('displays task title', () => {
+    return expect(taskComponent.text()).to.contain(task.title);
+  });
+
+  it('displays task notes', () => {
+    return expect(taskComponent.text()).to.contain(task.notes);
   });
 
   it('has no elements with class `completed` if task.taskStatus is not `COMPLETED`', () => {

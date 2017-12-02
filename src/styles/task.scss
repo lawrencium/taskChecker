@@ -1,36 +1,41 @@
 @import "popup";
 @import "taskList";
 
-$task-description-width: $popup-width * 0.75;
-$task-due-width: $popup-width * .25;
+$horizontal-padding: 5px;
+$popup-width-without-padding: $popup-width - 2*$horizontal-padding;
+$task-description-width: $popup-width-without-padding * 0.75;
+$task-due-width: $popup-width-without-padding * .25;
 
 $overdue-date-font-color: #c0392b;
 $due-date-font-size: 13px;
 
-.overdue-task {
-  font-size: $task-title-font-size;
-  padding: 5px;
-  overflow: auto;
-  display: flex;
-  align-items: center;
+$notes-font-color: #6a6a6a;
+$notes-font-size: $task-title-font-size - 4px;
+$notes-left-padding: 25px;
 
-  .task-description {
-    width: $task-description-width;
+.task {
+  font-size: $task-title-font-size;
+  padding: 0 5px 5px;
+  overflow: auto;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+
+  .task-title {
     display: flex;
     align-items: center;
+    flex: $task-description-width;
   }
 
-  &:hover {
-    background-color: $hover-main-color;
-  }
-
-  .completed {
-    text-decoration: line-through;
-    color: $grayed-out-font-color;
+  .task-notes {
+    font-size: $notes-font-size;
+    color: $notes-font-color;
+    width: $task-description-width - $notes-left-padding;
+    padding-left: $notes-left-padding;
   }
 
   label {
-    flex: 1;
+    flex: inherit;
     padding-left: 7px;
     cursor: pointer;
     margin-right: 10px;
@@ -43,8 +48,18 @@ $due-date-font-size: 13px;
     }
   }
 
+  &:hover {
+    background-color: $hover-main-color;
+  }
+
+  .completed {
+    text-decoration: line-through;
+    color: $grayed-out-font-color;
+  }
+
   .due-date-box {
     width: $task-due-width;
+    flex: $task-due-width;
     float: right;
     font-size: $due-date-font-size;
 

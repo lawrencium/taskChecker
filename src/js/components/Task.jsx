@@ -27,17 +27,20 @@ class Task extends React.Component {
     const dueDate = moment.utc(task.due).format('MM/DD/Y');
 
     return (
-      <li className="overdue-task">
-        <span className="task-description">
+      <li className="task">
+        <div className="task-title">
           <input type="checkbox" id={task.id} checked={isCompleted} onChange={this.toggleTaskChecked} />
           <label htmlFor={task.id} className={classNames(taskStatus)}>{task.title}</label>
-        </span>
-        <div className={classNames('due-date-box', taskStatus)}>
-          <div className={classNames('due-date', taskStatus)}>
-            {dueDate}
+          <div className={classNames('due-date-box', taskStatus)}>
+            <div className={classNames('due-date', taskStatus)}>
+              {dueDate}
             &nbsp;&nbsp;
-            {isOverdue && <i className="fa fa-exclamation-circle" />}
+              {isOverdue && <i className="fa fa-exclamation-circle" />}
+            </div>
           </div>
+        </div>
+        <div className="task-notes">
+          {task.notes}
         </div>
       </li>
     );

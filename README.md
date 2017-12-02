@@ -1,11 +1,10 @@
-# Task Checker Chrome Extension
+![screenshot](public/promotional/large_tile.png)
+
+
+# Task Checker Chrome Extension [![Build Status](https://travis-ci.org/lawrencium/taskChecker.svg?branch=master)](https://travis-ci.org/lawrencium/taskChecker)
 
 [![Install now.](https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png)
 ](https://chrome.google.com/webstore/detail/task-checker/emeajcjikgmcekalbihnnjlbpeaipjjn)
-
-[![Build Status](https://travis-ci.org/lawrencium/taskChecker.svg?branch=master)](https://travis-ci.org/lawrencium/taskChecker)
-
-![screenshot](public/promotional/large_tile.png)
 
 
 ### Easily manage your Google Tasks
@@ -41,7 +40,7 @@ This app syncs with the Google API every minute for any updates to your task lis
 6. `gulp karma-server` will run a Karma server that watches your files for any changes and automatically run the tests when any javascript files have changed
 
 ## Deploying the app
-1. Make sure the corresponding `key.pem` file is in your `config/` directory.
-2. Make sure the `config/config.json` credentials correspond to the expected prod or dev deployment
-3. `gulp dist --type {major, minor, patch}` will increment the MAJOR.MINOR.PATCH version in `package.json` and `manifest.json` depending on which type is specified.
-4. zip the `dist/` folder and upload to the [Chrome Web Store](https://chrome.google.com/webstore/developer/dashboard). 
+Currently Travis handles deployments to the prod and dev environment whenever the "master" and "develop" branch changes, respectively. The deploy script is in `deployToWebStore.sh`. 
+
+A deployment will only successfully publish if the version in `manifest.json` has a semantic version greater than the current version on the Chrome store. You can use the command `gulp dist --type {major, minor, patch}` to handle incrementing the MAJOR.MINOR.PATCH version in `package.json` and `manifest.json` 
+ 

@@ -25,6 +25,20 @@ module.exports = {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({ use: ['css-loader', 'sass-loader'] }),
       },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({ use: 'css-loader' }),
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|svg|otf)(\?.*$|$)/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            useRelativePath: true,
+            outputPath: 'styles/',
+          },
+        },
+      },
     ],
   },
   resolve: {

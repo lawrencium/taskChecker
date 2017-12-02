@@ -4,6 +4,7 @@ import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import moment from 'moment';
 import configureStore from 'redux-mock-store';
+import { ContentState, Editor, EditorState } from 'draft-js';
 
 import AddTask from '../../../src/js/components/AddTask';
 import actions from '../../../src/js/redux/actions';
@@ -28,8 +29,12 @@ describe('<AddTask />', () => {
     expect(addTaskWrapper.find('#add-task-datepicker')).to.have.lengthOf(1);
   });
 
-  it('renders input field for task title', () => {
-    expect(addTaskWrapper.find('#add-task-title')).to.have.lengthOf(1);
+  it('renders Editor field for task title', () => {
+    expect(addTaskWrapper.find('.add-task-title-container').find(Editor)).to.have.lengthOf(1);
+  });
+
+  it('renders Editor field for task notes', () => {
+    expect(addTaskWrapper.find('.add-task-notes-container').find(Editor)).to.have.lengthOf(1);
   });
 
   it('renders a submit button', () => {
@@ -37,15 +42,28 @@ describe('<AddTask />', () => {
   });
 
   describe('task title input', () => {
-    it('`taskTitle` defaults to empty string', () => {
-      return expect(addTaskWrapper.state('taskTitle')).to.be.empty;
+    it('`taskTitleEditorState` defaults to empty string', () => {
+      return expect(addTaskWrapper.state('taskTitleEditorState').getCurrentContent().getPlainText()).to.be.empty;
     });
 
-    it('`taskTitle` is bound to text in #add-task-title', () => {
+    it('`taskTitleEditorState` is bound to text in Editor', () => {
       const taskTitle = 'this is the task title';
-      addTaskWrapper.find('#add-task-title').simulate('change', { target: { value: taskTitle } });
+      addTaskWrapper.find('.add-task-title-container').find(Editor).simulate('change', taskTitle);
 
-      return expect(addTaskWrapper.state('taskTitle')).to.equal(taskTitle);
+      return expect(addTaskWrapper.state('taskTitleEditorState')).to.equal(taskTitle);
+    });
+  });
+
+  describe('task notes input', () => {
+    it('`taskNotesEditorState` defaults to empty', () => {
+      return expect(addTaskWrapper.state('taskNotesEditorState').getCurrentContent().getPlainText()).to.be.empty;
+    });
+
+    it('`taskNotesEditorState` is bound to text in Editor', () => {
+      const taskNotes = 'this is the task notes';
+      addTaskWrapper.find('.add-task-notes-container').find(Editor).simulate('change', taskNotes);
+
+      return expect(addTaskWrapper.state('taskNotesEditorState')).to.equal(taskNotes);
     });
   });
 
@@ -78,22 +96,29 @@ describe('<AddTask />', () => {
   describe('submit button onClick', () => {
     it('dispatches single `ASYNC_CREATE_TASK` action', () => {
       addTaskWrapper.find('button').simulate('click');
-      const expectedAction = actions.asyncCreateTask({ title: '', due: undefined });
+      const expectedAction = actions.asyncCreateTask({ title: '', due: undefined, notes: '' });
 
       return expect(store.getActions()).to.eql([expectedAction]);
     });
 
-    it('dispatches action with updated due date and task title', () => {
+    it('dispatches action with updated due date, task title, and task notes', () => {
       const dueDate = '2017-12-19';
       const taskTitle = 'some task title';
+      const taskNotes = 'some task notes';
       addTaskWrapper.instance().updateSelectedDate(dueDate);
-      addTaskWrapper.find('#add-task-title').simulate('change', { target: { value: taskTitle } });
+
+      const updatedTaskTitleState = EditorState.createWithContent(ContentState.createFromText(taskTitle));
+      const updatedTaskNotesState = EditorState.createWithContent(ContentState.createFromText(taskNotes));
+
+      addTaskWrapper.find('.add-task-title-container').find(Editor).simulate('change', updatedTaskTitleState);
+      addTaskWrapper.find('.add-task-notes-container').find(Editor).simulate('change', updatedTaskNotesState);
 
       addTaskWrapper.find('button').simulate('click');
 
       const expectedAction = actions.asyncCreateTask({
         title: taskTitle,
         due: moment(dueDate),
+        notes: taskNotes,
       });
 
       return expect(store.getActions()).to.eql([expectedAction]);
@@ -101,11 +126,22 @@ describe('<AddTask />', () => {
 
     it('after submit, clears task title field', () => {
       const taskTitle = 'some task title';
-      addTaskWrapper.find('#add-task-title').simulate('change', { target: { value: taskTitle } });
+      const updatedTaskTitleState = EditorState.createWithContent(ContentState.createFromText(taskTitle));
+
+      addTaskWrapper.find('.add-task-title-container').find(Editor).simulate('change', updatedTaskTitleState);
 
       addTaskWrapper.find('button').simulate('click');
+      return expect(addTaskWrapper.state('taskTitleEditorState').getCurrentContent().getPlainText()).to.be.empty;
+    });
 
-      return expect(addTaskWrapper.state('taskTitle')).to.be.empty;
+    it('after submit, clears task notes field', () => {
+      const taskNotes = 'some task notes';
+      const updatedTaskTitleState = EditorState.createWithContent(ContentState.createFromText(taskNotes));
+
+      addTaskWrapper.find('.add-task-notes-container').find(Editor).simulate('change', updatedTaskTitleState);
+
+      addTaskWrapper.find('button').simulate('click');
+      return expect(addTaskWrapper.state('taskNotesEditorState').getCurrentContent().getPlainText()).to.be.empty;
     });
 
     it('after submit, clears datepicker field', () => {
