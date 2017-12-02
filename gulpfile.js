@@ -71,7 +71,7 @@ gulp.task('package', (done) => {
         .pipe(inject(gulp.src('dist/src/js/background.bundle.js', { read: false }), { ignorePath: 'dist/' }))
         .pipe(gulp.dest('dist/src'));
       done();
-    }
+    },
   );
 });
 
@@ -88,15 +88,20 @@ gulp.task('dist', () => {
   runSequence(
     'clean',
     'bump-version',
-    'package'
+    'package',
   );
 });
 
-gulp.task('dev', ['package'], () => {
-  exec('jq ".key=\\\"${CLIENT_KEY}\\\"" dist/manifest.json > tmp && mv tmp dist/manifest.json', (err) => {
-    console.log('jq ".key=\"${CLIENT_KEY}\"" dist/manifest.json', err);
-  });
-  return startWebpackBundle(true);
+gulp.task('dev', () => {
+  runSequence(
+    'package',
+    () => {
+      exec('jq ".key=\\\"${CLIENT_KEY}\\\"" dist/manifest.json > tmp && mv tmp dist/manifest.json', (err) => {
+        console.log('jq ".key=\"${CLIENT_KEY}\"" dist/manifest.json', err);
+      });
+      return startWebpackBundle(true);
+    },
+  );
 });
 
 gulp.task('karma-server', (done) => {

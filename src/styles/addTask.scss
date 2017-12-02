@@ -1,28 +1,27 @@
 @import "~pikaday/css/pikaday";
+@import '~draft-js/dist/Draft.css';
 @import "popup";
 @import "taskList";
 
-$add-task-paddng: 5px;
-$width-after-padding: ($popup-width - 2*$add-task-paddng);
+$add-task-horizontal-padding: 10px;
+$width-after-padding: ($popup-width - 2*$add-task-horizontal-padding);
 $add-task-font-size: $task-title-font-size + 2px;
 $add-task-title-width: $width-after-padding * 0.75;
 $add-task-buttons-width: $width-after-padding * 0.25;
 $input-height: 30px;
 
 .add-task {
-  padding: 5px 5px 0;
+  padding: 0 $add-task-horizontal-padding;
   display: inline-block;
 
-  input, textarea {
+  input {
     width: inherit;
     box-sizing: border-box;
     border-radius: 4px;
     height: $input-height;
-    min-height: $input-height;
     padding-left: 5px;
     padding-top: 4px;
     border: 1px solid $hover-main-color;
-    resize: vertical;
 
     &:focus {
       outline: none;
@@ -33,11 +32,13 @@ $input-height: 30px;
   .add-task-title-container {
     float: left;
     width: $add-task-title-width;
-
-    #add-task-title {
-      font-size: $add-task-font-size;
-      font-weight: lighter;
-    }
+    box-sizing: border-box;
+    border-bottom: 1px solid #ccc;
+    font-size: $add-task-font-size;
+    font-weight: lighter;
+    height: $input-height;
+    line-height: 200%;
+    overflow: hidden;
   }
   .add-task-buttons-container {
     float: right;
@@ -64,7 +65,7 @@ $input-height: 30px;
 
       button {
         &.overdue {
-         background-color: $main-color-with-overdue;
+          background-color: $main-color-with-overdue;
         }
         position: absolute;
         height: $input-height;
@@ -77,5 +78,11 @@ $input-height: 30px;
         cursor: pointer;
       }
     }
+  }
+
+  .add-task-notes-container {
+    float: left;
+    margin-top: 5px;
+    width: $width-after-padding;
   }
 }

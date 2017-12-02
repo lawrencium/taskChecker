@@ -1,7 +1,8 @@
 {
-  "version": "2.3.1",
+  "version": "2.4.0",
   "dependencies": {
     "classnames": "^2.2.5",
+    "draft-js": "^0.10.4",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "pikaday": "^1.6.1",
@@ -33,6 +34,8 @@
     "eslint-plugin-react": "^7.4.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "fetch-mock": "^5.13.1",
+    "file-loader": "^1.1.5",
+    "font-awesome": "^4.7.0",
     "gulp": "^3.9.1",
     "gulp-bump": "^2.8.0",
     "gulp-eslint": "^4.0.0",
