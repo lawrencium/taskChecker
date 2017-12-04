@@ -53,10 +53,7 @@ const updateTask = (taskToUpdate, updateResponseHandler) => {
 };
 
 const createTask = (taskToCreate, createResponseHandler) => {
-  const dueDateAsMoment = taskToCreate.due && moment(taskToCreate.due);
-  const asIsoString = dueDateAsMoment && dueDateAsMoment.utcOffset(0, true).toISOString();
-  const withCorrectTime = assign({}, taskToCreate, { due: asIsoString });
-  return GoogleTasksService.createTask(withCorrectTime, (createResponse) => {
+  return GoogleTasksService.createTask(taskToCreate, (createResponse) => {
     const withAdditionalFields = assign({}, createResponse, { taskStatus: mapToTaskStatus(createResponse, moment()) });
 
     createResponseHandler(withAdditionalFields);

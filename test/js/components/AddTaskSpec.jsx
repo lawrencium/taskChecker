@@ -5,6 +5,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import moment from 'moment';
 import configureStore from 'redux-mock-store';
 import { ContentState, Editor, EditorState } from 'draft-js';
+import sinon from 'sinon';
 
 import AddTask from '../../../src/js/components/AddTask';
 import actions from '../../../src/js/redux/actions';
@@ -22,6 +23,12 @@ beforeEach(() => {
 let addTaskWrapper;
 beforeEach(() => {
   addTaskWrapper = shallow(<AddTask store={store} />).dive();
+});
+
+const currentFakeTime = '2017-12-19T09:00:00.000Z';
+const clock = sinon.useFakeTimers(moment(currentFakeTime).valueOf());
+after(() => {
+  clock.restore();
 });
 
 describe('<AddTask />', () => {
@@ -68,8 +75,8 @@ describe('<AddTask />', () => {
   });
 
   describe('datepicker', () => {
-    it('`due` defaults to undefined date', () => {
-      return expect(addTaskWrapper.state('selectedDate')).to.be.undefined;
+    it('`due` defaults to today', () => {
+      return expect(addTaskWrapper.state('due').isSame(currentFakeTime)).to.be.true;
     });
 
     it('`due` is updated when `updateSelectedDate` is called', () => {
@@ -96,13 +103,13 @@ describe('<AddTask />', () => {
   describe('submit button onClick', () => {
     it('dispatches single `ASYNC_CREATE_TASK` action', () => {
       addTaskWrapper.find('button').simulate('click');
-      const expectedAction = actions.asyncCreateTask({ title: '', due: undefined, notes: '' });
+      const expectedAction = actions.asyncCreateTask({ title: '', due: currentFakeTime, notes: '' });
 
-      return expect(store.getActions()).to.eql([expectedAction]);
+      return expect(store.getActions()[0]).to.eql(expectedAction);
     });
 
     it('dispatches action with updated due date, task title, and task notes', () => {
-      const dueDate = '2017-12-19';
+      const dueDate = '2017-12-20';
       const taskTitle = 'some task title';
       const taskNotes = 'some task notes';
       addTaskWrapper.instance().updateSelectedDate(dueDate);
@@ -117,7 +124,7 @@ describe('<AddTask />', () => {
 
       const expectedAction = actions.asyncCreateTask({
         title: taskTitle,
-        due: moment(dueDate),
+        due: moment(dueDate).toISOString(),
         notes: taskNotes,
       });
 
@@ -144,13 +151,13 @@ describe('<AddTask />', () => {
       return expect(addTaskWrapper.state('taskNotesEditorState').getCurrentContent().getPlainText()).to.be.empty;
     });
 
-    it('after submit, clears datepicker field', () => {
-      const dueDate = '2017-12-19';
+    it('after submit, datepicker stays the same', () => {
+      const dueDate = '2017-12-20';
       addTaskWrapper.instance().updateSelectedDate(dueDate);
 
       addTaskWrapper.find('button').simulate('click');
 
-      return expect(addTaskWrapper.state('due')).to.be.null;
+      return expect(addTaskWrapper.state('due').isSame(moment(dueDate))).to.be.true;
     });
   });
 });

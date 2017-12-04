@@ -14,7 +14,7 @@ class AddTask extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      due: undefined,
+      due: moment(),
       taskTitleEditorState: EditorState.createEmpty(),
       taskNotesEditorState: EditorState.createEmpty(),
     };
@@ -33,6 +33,8 @@ class AddTask extends React.Component {
     this.datepicker = new Pikaday({
       field: document.getElementById('add-task-datepicker'),
       container: document.getElementById('add-task-calendar-container'),
+      defaultDate: component.state.due,
+      setDefaultDate: true,
       onSelect: () => {
         component.updateSelectedDate(moment(component.datepicker.getDate()));
       },
@@ -47,17 +49,15 @@ class AddTask extends React.Component {
   submitTask = () => {
     const taskTitle = this.state.taskTitleEditorState.getCurrentContent().getPlainText();
     const taskNotes = this.state.taskNotesEditorState.getCurrentContent().getPlainText();
-
     const taskToCreate = {
       title: taskTitle,
-      due: this.state.due,
+      due: this.state.due.utcOffset(0, true).toISOString(),
       notes: taskNotes,
     };
     this.props.asyncCreateTask(taskToCreate);
     const withClearedTitleState = EditorState.push(this.state.taskTitleEditorState, ContentState.createFromText(''));
     const withClearedNotesState = EditorState.push(this.state.taskNotesEditorState, ContentState.createFromText(''));
     this.setState({
-      due: null,
       taskTitleEditorState: withClearedTitleState,
       taskNotesEditorState: withClearedNotesState,
     });
@@ -71,20 +71,25 @@ class AddTask extends React.Component {
           <Editor
             editorState={this.state.taskTitleEditorState}
             onChange={this.onTaskTitleChange}
-            placeholder="Declutter your mind"
+            placeholder="Unclutter your mind"
           />
         </div>
         <span className="add-task-buttons-container">
-          <span className="datepicker-container">
-            <input type="text" placeholder="mm/dd/yyyy" id="add-task-datepicker" />
+          <div className="datepicker-container">
+            <input
+              type="text"
+              placeholder={this.state.due.format('MM/DD/Y')}
+              id="add-task-datepicker"
+              className="datepicker"
+            />
             <div id="add-task-calendar-container" />
-          </span>
-          <span className="submit-button-container">
+          </div>
+          <div className="submit-button-container">
             <button
               onClick={this.submitTask}
               className={classNames('fa fa-plus', { overdue: this.props.hasOverdueTasks })}
             />
-          </span>
+          </div>
         </span>
         <div className="add-task-notes-container">
           <Editor
