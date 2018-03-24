@@ -1,10 +1,10 @@
 {
-  "version": "2.4.1",
+  "version": "2.4.2",
   "dependencies": {
     "classnames": "^2.2.5",
     "draft-js": "^0.10.4",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1",
+    "moment": "^2.21.0",
     "pikaday": "^1.6.1",
     "react": "^16.0.0",
     "react-chrome-redux": "^1.4.0",
@@ -54,7 +54,6 @@
     "sass-loader": "^6.0.6",
     "sinon": "^4.0.1",
     "sinon-chrome": "^2.2.1",
-    "uglifyjs-webpack-plugin": "^1.0.1",
     "watchify": "^3.9.0",
     "webpack": "^3.7.1"
   },

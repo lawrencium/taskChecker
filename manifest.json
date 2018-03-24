@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Task Checker",
   "description": "Get a button on your browser toolbar that you can click to see your Google Tasks, without ever leaving your page.",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "browser_action": {
     "default_icon": "public/images/checkmark_gray.png",
     "default_popup": "src/popup.html",
