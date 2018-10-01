@@ -2,29 +2,29 @@ import React from 'react';
 import moment from 'moment';
 import Pikaday from 'pikaday';
 import { connect } from 'react-redux';
-import { values } from 'lodash';
+import { uniqueId, values } from 'lodash';
 import classNames from 'classnames';
-import { ContentState, Editor, EditorState } from 'draft-js';
 
 import '../../styles/addTask.scss';
 import actions from '../redux/actions';
 import constants from '../constants';
+import TaskTextEditor from './TaskTextEditor';
 
 class AddTask extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       due: moment(),
-      taskTitleEditorState: EditorState.createEmpty(),
-      taskNotesEditorState: EditorState.createEmpty(),
+      addTaskKey: uniqueId(),
+      taskTitleText: '',
+      taskNotesText: '',
     };
 
-    this.onTaskTitleChange = (taskTitleEditorState) => {
-      this.setState({ taskTitleEditorState });
+    this.onTaskTitleTextChange = (taskTitleText) => {
+      this.setState({ taskTitleText });
     };
-
-    this.onTaskNotesChange = (taskNotesEditorState) => {
-      this.setState({ taskNotesEditorState });
+    this.onTaskNotesTextChange = (taskNotesText) => {
+      this.setState({ taskNotesText });
     };
   }
 
@@ -47,19 +47,18 @@ class AddTask extends React.Component {
   }
 
   submitTask = () => {
-    const taskTitle = this.state.taskTitleEditorState.getCurrentContent().getPlainText();
-    const taskNotes = this.state.taskNotesEditorState.getCurrentContent().getPlainText();
+    const taskTitle = this.state.taskTitleText;
+    const taskNotes = this.state.taskNotesText;
     const taskToCreate = {
       title: taskTitle,
       due: this.state.due.utcOffset(0, true).toISOString(),
       notes: taskNotes,
     };
     this.props.asyncCreateTask(taskToCreate);
-    const withClearedTitleState = EditorState.push(this.state.taskTitleEditorState, ContentState.createFromText(''));
-    const withClearedNotesState = EditorState.push(this.state.taskNotesEditorState, ContentState.createFromText(''));
     this.setState({
-      taskTitleEditorState: withClearedTitleState,
-      taskNotesEditorState: withClearedNotesState,
+      addTaskKey: uniqueId(),
+      taskTitleText: '',
+      taskNotesText: '',
     });
     this.datepicker.setDate(null);
   };
@@ -67,13 +66,6 @@ class AddTask extends React.Component {
   render() {
     return (
       <div className="add-task">
-        <div className="add-task-title-container">
-          <Editor
-            editorState={this.state.taskTitleEditorState}
-            onChange={this.onTaskTitleChange}
-            placeholder="Unclutter your mind"
-          />
-        </div>
         <span className="add-task-buttons-container">
           <div className="datepicker-container">
             <input
@@ -91,13 +83,15 @@ class AddTask extends React.Component {
             />
           </div>
         </span>
-        <div className="add-task-notes-container">
-          <Editor
-            editorState={this.state.taskNotesEditorState}
-            onChange={this.onTaskNotesChange}
-            placeholder="Notes"
-          />
-        </div>
+        <TaskTextEditor
+          key={this.state.addTaskKey}
+          titlePlaceholder="Unclutter your mind"
+          notesPlaceholder="Notes"
+          taskTitleText={this.state.taskTitleText}
+          onTaskTitleChange={this.onTaskTitleTextChange}
+          taskNotesText={this.state.taskNotesText}
+          onTaskNotesChange={this.onTaskNotesTextChange}
+        />
       </div>
     );
   }

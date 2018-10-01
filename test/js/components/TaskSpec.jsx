@@ -8,6 +8,7 @@ import { assign } from 'lodash';
 import Task from '../../../src/js/components/Task';
 import actions from '../../../src/js/redux/actions';
 import constants from '../../../src/js/constants';
+import TaskTextEditor from '../../../src/js/components/TaskTextEditor';
 
 const { expect } = chai;
 
@@ -32,16 +33,29 @@ describe('<Task />', () => {
     taskComponent = shallow(<Task task={task} store={store} />).dive();
   });
 
-  it('creates wrapping li on render()', () => {
-    return expect(taskComponent.first().is('li')).to.be.true;
+  it('renders a TaskTextEditor', () => {
+    return expect(taskComponent.find(TaskTextEditor)).to.have.length(1);
   });
 
-  it('displays task title', () => {
-    return expect(taskComponent.text()).to.contain(task.title);
-  });
+  describe('task editor', () => {
+    let taskEditor;
+    beforeEach(() => {
+      taskEditor = taskComponent.find(TaskTextEditor).first();
+    });
 
-  it('displays task notes', () => {
-    return expect(taskComponent.text()).to.contain(task.notes);
+    it('has task title set', () => {
+      expect(taskEditor.props().taskTitleText).to.equal(task.title);
+    });
+
+    it('has task notes set', () => {
+      expect(taskEditor.props().taskNotesText).to.equal(task.notes);
+    });
+
+    it('submits task to update on blur event', () => {
+      taskEditor.props().onBlur();
+
+      return expect(store.getActions()).to.be.not.empty;
+    });
   });
 
   it('has no elements with class `completed` if task.taskStatus is not `COMPLETED`', () => {
@@ -99,35 +113,8 @@ describe('<Task />', () => {
       li = taskComponent.find('li').first();
     });
 
-    it('has label', () => {
-      return expect(li.find('label')).to.have.length(1);
-    });
-
-    it('has input', () => {
-      return expect(li.find('input')).to.have.length(1);
-    });
-
     it('has .due-date', () => {
       expect(li.find('.due-date-box')).to.have.lengthOf(1);
-    });
-
-    describe('label', () => {
-      let label;
-      beforeEach(() => {
-        label = li.find('label').first();
-      });
-
-      it('creates single label for overdue task', () => {
-        return expect(li.find('label')).to.have.length(1);
-      });
-
-      it('has `task.title` for text', () => {
-        return expect(label.text()).to.equal(task.title);
-      });
-
-      it('has htmlFor set to `task.id`', () => {
-        return expect(label.find(`[htmlFor="${task.id}"]`)).to.have.length(1);
-      });
     });
 
     describe('input', () => {
@@ -174,7 +161,9 @@ describe('<Task />', () => {
 
         describe('unchecked to checked', () => {
           it('dispatches `ASYNC_UPDATE_TASK` action with "taskStatus" `COMPLETED`', () => {
-            const overdueTask = { taskStatus: constants.TASK_STATUS.OVERDUE, id: 1, title: 'overdueTaskTitle' };
+            const overdueTask = {
+              taskStatus: constants.TASK_STATUS.OVERDUE, id: 1, title: 'overdueTaskTitle', notes: 'notes',
+            };
             const incompleteTask = shallow(<Task task={overdueTask} store={store} />).dive();
 
             const incompleteTaskInput = incompleteTask.find('input');

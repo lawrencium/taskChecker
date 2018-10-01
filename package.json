@@ -1,5 +1,5 @@
 {
-  "version": "2.4.2",
+  "version": "2.5.0",
   "dependencies": {
     "classnames": "^2.2.5",
     "draft-js": "^0.10.4",
