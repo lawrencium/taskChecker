@@ -14,7 +14,7 @@ $input-height: 30px;
   padding: 0 $add-task-horizontal-padding;
   display: inline-block;
 
-  .add-task-title-container {
+  .task-title-container {
     float: left;
     width: $add-task-title-width;
     box-sizing: border-box;
@@ -25,6 +25,13 @@ $input-height: 30px;
     overflow: hidden;
     padding-top: 7px;
   }
+
+  .task-notes-container {
+    float: left;
+    margin-top: 5px;
+    width: $add-task-title-width;
+  }
+
   .add-task-buttons-container {
     float: right;
     width: $add-task-buttons-width;
@@ -75,11 +82,5 @@ $input-height: 30px;
         cursor: pointer;
       }
     }
-  }
-
-  .add-task-notes-container {
-    float: left;
-    margin-top: 5px;
-    width: $width-after-padding;
   }
 }

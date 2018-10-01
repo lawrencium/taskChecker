@@ -7,12 +7,50 @@ import moment from 'moment';
 import actions from '../redux/actions';
 import '../../styles/task.scss';
 import constants from '../constants';
+import TaskTextEditor from './TaskTextEditor';
 
 class Task extends React.Component {
-  toggleTaskChecked = () => {
-    const statusAfterToggle = isTaskCompleted(this.props.task) ? constants.TASK_STATUS.OVERDUE : constants.TASK_STATUS.COMPLETED;
+  constructor(props) {
+    super(props);
 
-    const updatedTask = assign({}, this.props.task, { taskStatus: statusAfterToggle });
+    const { task } = props;
+
+    this.state = {
+      taskTitleText: task.title,
+      taskNotesText: task.notes,
+      taskStatus: task.taskStatus,
+    };
+  }
+
+  onTaskTitleTextChange = (taskTitleText) => {
+    this.setState({ taskTitleText });
+  };
+
+  onTaskNotesTextChange = (taskNotesText) => {
+    this.setState({ taskNotesText });
+  };
+
+  onBlur = () => {
+    this.submitTask();
+  };
+
+  toggleTaskChecked = () => {
+    const statusAfterToggle = isTaskCompleted(this.state) ? constants.TASK_STATUS.OVERDUE : constants.TASK_STATUS.COMPLETED;
+    this.setState({
+      taskStatus: statusAfterToggle,
+    }, () => this.submitTask());
+  };
+
+
+  submitTask = () => {
+    const taskTitle = this.state.taskTitleText;
+    const taskNotes = this.state.taskNotesText;
+    const withUpdatedFields = {
+      title: taskTitle,
+      notes: taskNotes,
+      taskStatus: this.state.taskStatus,
+    };
+    const updatedTask = assign({}, this.props.task, withUpdatedFields);
     this.props.asyncUpdateTask(updatedTask);
   };
 
@@ -28,20 +66,25 @@ class Task extends React.Component {
 
     return (
       <li className="task">
-        <div className="task-title">
-          <input type="checkbox" id={task.id} checked={isCompleted} onChange={this.toggleTaskChecked} />
-          <label htmlFor={task.id} className={classNames(taskStatus)}>{task.title}</label>
-          <div className={classNames('due-date-box', taskStatus)}>
-            <div className={classNames('due-date', taskStatus)}>
-              {dueDate}
+        <input type="checkbox" id={task.id} checked={isCompleted} onChange={this.toggleTaskChecked} />
+        <label className={classNames(taskStatus)}>
+          <TaskTextEditor
+            taskTitleText={task.title}
+            taskNotesText={task.notes}
+            titlePlaceholder="Task"
+            notesPlaceholder="Notes"
+            onTaskTitleChange={this.onTaskTitleTextChange}
+            onTaskNotesChange={this.onTaskNotesTextChange}
+            onBlur={this.onBlur}
+          />
+        </label>
+        <span className={classNames('due-date-box', taskStatus)}>
+          <span className={classNames('due-date', taskStatus)}>
+            {dueDate}
             &nbsp;&nbsp;
-              {isOverdue && <i className="fa fa-exclamation-circle" />}
-            </div>
-          </div>
-        </div>
-        <div className="task-notes">
-          {task.notes}
-        </div>
+            {isOverdue && <i className="fa fa-exclamation-circle" />}
+          </span>
+        </span>
       </li>
     );
   }

@@ -50,6 +50,8 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+.DS_Store
+
 /node_modules/
 /**/*.pem
 /dist/**

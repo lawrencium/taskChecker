@@ -3,7 +3,7 @@
 
 $horizontal-padding: 5px;
 $popup-width-without-padding: $popup-width - 2*$horizontal-padding;
-$task-description-width: $popup-width-without-padding * 0.75;
+$task-description-width: $popup-width-without-padding * 0.73;
 $task-due-width: $popup-width-without-padding * .25;
 
 $overdue-date-font-color: #c0392b;
@@ -11,7 +11,6 @@ $due-date-font-size: 13px;
 
 $notes-font-color: #6a6a6a;
 $notes-font-size: $task-title-font-size - 4px;
-$notes-left-padding: 25px;
 
 .task {
   font-size: $task-title-font-size;
@@ -21,24 +20,26 @@ $notes-left-padding: 25px;
   display: flex;
   flex-wrap: wrap;
 
-  .task-title {
-    display: flex;
-    align-items: center;
-    flex: $task-description-width;
+  .task-text-editor-container {
+    width: $task-description-width;
   }
 
-  .task-notes {
+  .task-title-container {
+    align-items: center;
+    width: $task-description-width;
+  }
+
+  .task-notes-container {
     font-size: $notes-font-size;
     color: $notes-font-color;
-    width: $task-description-width - $notes-left-padding;
-    padding-left: $notes-left-padding;
+    width: $task-description-width;
   }
 
   label {
     flex: inherit;
     padding-left: 7px;
-    cursor: pointer;
-    margin-right: 10px;
+    cursor: text;
+    width: $task-description-width;
   }
 
   input[type="checkbox"] {
@@ -55,11 +56,13 @@ $notes-left-padding: 25px;
   .completed {
     text-decoration: line-through;
     color: $grayed-out-font-color;
+
+    .public-DraftEditorPlaceholder-root {
+      text-decoration: line-through;
+    }
   }
 
   .due-date-box {
-    width: $task-due-width;
-    flex: $task-due-width;
     float: right;
     font-size: $due-date-font-size;
 

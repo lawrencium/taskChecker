@@ -4,12 +4,12 @@ import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import moment from 'moment';
 import configureStore from 'redux-mock-store';
-import { ContentState, Editor, EditorState } from 'draft-js';
 import sinon from 'sinon';
 
 import AddTask from '../../../src/js/components/AddTask';
 import actions from '../../../src/js/redux/actions';
 import constants from '../../../src/js/constants';
+import TaskTextEditor from '../../../src/js/components/TaskTextEditor';
 
 const { expect } = chai;
 configure({ adapter: new Adapter() });
@@ -36,42 +36,8 @@ describe('<AddTask />', () => {
     expect(addTaskWrapper.find('#add-task-datepicker')).to.have.lengthOf(1);
   });
 
-  it('renders Editor field for task title', () => {
-    expect(addTaskWrapper.find('.add-task-title-container').find(Editor)).to.have.lengthOf(1);
-  });
-
-  it('renders Editor field for task notes', () => {
-    expect(addTaskWrapper.find('.add-task-notes-container').find(Editor)).to.have.lengthOf(1);
-  });
-
   it('renders a submit button', () => {
     expect(addTaskWrapper.find('button')).to.have.lengthOf(1);
-  });
-
-  describe('task title input', () => {
-    it('`taskTitleEditorState` defaults to empty string', () => {
-      return expect(addTaskWrapper.state('taskTitleEditorState').getCurrentContent().getPlainText()).to.be.empty;
-    });
-
-    it('`taskTitleEditorState` is bound to text in Editor', () => {
-      const taskTitle = 'this is the task title';
-      addTaskWrapper.find('.add-task-title-container').find(Editor).simulate('change', taskTitle);
-
-      return expect(addTaskWrapper.state('taskTitleEditorState')).to.equal(taskTitle);
-    });
-  });
-
-  describe('task notes input', () => {
-    it('`taskNotesEditorState` defaults to empty', () => {
-      return expect(addTaskWrapper.state('taskNotesEditorState').getCurrentContent().getPlainText()).to.be.empty;
-    });
-
-    it('`taskNotesEditorState` is bound to text in Editor', () => {
-      const taskNotes = 'this is the task notes';
-      addTaskWrapper.find('.add-task-notes-container').find(Editor).simulate('change', taskNotes);
-
-      return expect(addTaskWrapper.state('taskNotesEditorState')).to.equal(taskNotes);
-    });
   });
 
   describe('datepicker', () => {
@@ -114,11 +80,8 @@ describe('<AddTask />', () => {
       const taskNotes = 'some task notes';
       addTaskWrapper.instance().updateSelectedDate(dueDate);
 
-      const updatedTaskTitleState = EditorState.createWithContent(ContentState.createFromText(taskTitle));
-      const updatedTaskNotesState = EditorState.createWithContent(ContentState.createFromText(taskNotes));
-
-      addTaskWrapper.find('.add-task-title-container').find(Editor).simulate('change', updatedTaskTitleState);
-      addTaskWrapper.find('.add-task-notes-container').find(Editor).simulate('change', updatedTaskNotesState);
+      addTaskWrapper.find(TaskTextEditor).props().onTaskTitleChange(taskTitle);
+      addTaskWrapper.find(TaskTextEditor).props().onTaskNotesChange(taskNotes);
 
       addTaskWrapper.find('button').simulate('click');
 
@@ -133,22 +96,19 @@ describe('<AddTask />', () => {
 
     it('after submit, clears task title field', () => {
       const taskTitle = 'some task title';
-      const updatedTaskTitleState = EditorState.createWithContent(ContentState.createFromText(taskTitle));
 
-      addTaskWrapper.find('.add-task-title-container').find(Editor).simulate('change', updatedTaskTitleState);
+      addTaskWrapper.find(TaskTextEditor).props().onTaskTitleChange(taskTitle);
 
       addTaskWrapper.find('button').simulate('click');
-      return expect(addTaskWrapper.state('taskTitleEditorState').getCurrentContent().getPlainText()).to.be.empty;
+      return expect(addTaskWrapper.state('taskTitleText')).to.be.empty;
     });
 
     it('after submit, clears task notes field', () => {
       const taskNotes = 'some task notes';
-      const updatedTaskTitleState = EditorState.createWithContent(ContentState.createFromText(taskNotes));
-
-      addTaskWrapper.find('.add-task-notes-container').find(Editor).simulate('change', updatedTaskTitleState);
+      addTaskWrapper.find(TaskTextEditor).props().onTaskNotesChange(taskNotes);
 
       addTaskWrapper.find('button').simulate('click');
-      return expect(addTaskWrapper.state('taskNotesEditorState').getCurrentContent().getPlainText()).to.be.empty;
+      return expect(addTaskWrapper.state('taskNotesText')).to.be.empty;
     });
 
     it('after submit, datepicker stays the same', () => {
