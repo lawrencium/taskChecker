@@ -4,6 +4,7 @@ import React from 'react';
 import Adapter from 'enzyme-adapter-react-16';
 import configureStore from 'redux-mock-store';
 import { assign } from 'lodash';
+import moment from 'moment';
 
 import Task from '../../../src/js/components/Task';
 import actions from '../../../src/js/redux/actions';
@@ -162,7 +163,7 @@ describe('<Task />', () => {
         describe('unchecked to checked', () => {
           it('dispatches `ASYNC_UPDATE_TASK` action with "taskStatus" `COMPLETED`', () => {
             const overdueTask = {
-              taskStatus: constants.TASK_STATUS.OVERDUE, id: 1, title: 'overdueTaskTitle', notes: 'notes',
+              taskStatus: constants.TASK_STATUS.OVERDUE, id: 1, title: 'overdueTaskTitle', notes: 'notes', due: moment('2019-09-09').toISOString(),
             };
             const incompleteTask = shallow(<Task task={overdueTask} store={store} />).dive();
 
@@ -174,13 +175,6 @@ describe('<Task />', () => {
             expect(store.getActions()).to.eql([expectedAction]);
           });
         });
-      });
-    });
-
-    describe('.due-date', () => {
-      it('has date formatted as `MM/DD/YYYY`', () => {
-        const dueDate = li.find('.due-date-box');
-        expect(dueDate.text()).to.include('10/01/2017');
       });
     });
   });

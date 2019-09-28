@@ -1,6 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import Pikaday from 'pikaday';
 import { connect } from 'react-redux';
 import { uniqueId, values } from 'lodash';
 import classNames from 'classnames';
@@ -9,6 +8,7 @@ import '../../styles/addTask.scss';
 import actions from '../redux/actions';
 import constants from '../constants';
 import TaskTextEditor from './TaskTextEditor';
+import TaskDateEditor from './TaskDateEditor';
 
 class AddTask extends React.Component {
   constructor(props) {
@@ -26,24 +26,9 @@ class AddTask extends React.Component {
     this.onTaskNotesTextChange = (taskNotesText) => {
       this.setState({ taskNotesText });
     };
-  }
-
-  componentDidMount() {
-    const component = this;
-    this.datepicker = new Pikaday({
-      field: document.getElementById('add-task-datepicker'),
-      container: document.getElementById('add-task-calendar-container'),
-      defaultDate: component.state.due,
-      setDefaultDate: true,
-      onSelect: () => {
-        component.updateSelectedDate(moment(component.datepicker.getDate()));
-      },
-      format: 'MM/DD/Y',
-    });
-  }
-
-  updateSelectedDate(date) {
-    this.setState({ due: moment(date) });
+    this.onTaskDueDateChange = (due) => {
+      this.setState({ due });
+    };
   }
 
   submitTask = () => {
@@ -60,22 +45,17 @@ class AddTask extends React.Component {
       taskTitleText: '',
       taskNotesText: '',
     });
-    this.datepicker.setDate(null);
   };
 
   render() {
     return (
       <div className="add-task">
         <span className="add-task-buttons-container">
-          <div className="datepicker-container">
-            <input
-              type="text"
-              placeholder={this.state.due.format('MM/DD/Y')}
-              id="add-task-datepicker"
-              className="datepicker"
-            />
-            <div id="add-task-calendar-container" />
-          </div>
+          <TaskDateEditor
+            fieldId="add-task-datepicker"
+            containerId="add-task-calendar-container"
+            onDueDateChange={this.onTaskDueDateChange}
+          />
           <div className="submit-button-container">
             <button
               onClick={this.submitTask}
