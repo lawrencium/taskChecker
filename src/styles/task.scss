@@ -3,7 +3,7 @@
 
 $horizontal-padding: 5px;
 $popup-width-without-padding: $popup-width - 2*$horizontal-padding;
-$task-description-width: $popup-width-without-padding * 0.73;
+$task-description-width: $popup-width-without-padding * 0.68;
 $task-due-width: $popup-width-without-padding * .25;
 
 $overdue-date-font-color: #c0392b;
@@ -64,17 +64,41 @@ $notes-font-size: $task-title-font-size - 4px;
 
   .due-date-box {
     float: right;
-    font-size: $due-date-font-size;
+    position: relative;
+    width: 25%;
+    &.overdue {
+      color: $overdue-date-font-color;
+    }
+    &.completed {
+      color: $grayed-out-font-color;
+      font-weight: lighter;
+    }
 
-    .due-date {
-      font-weight: normal;
-      &.overdue {
-        color: $overdue-date-font-color;
+    .datepicker-container {
+      float: left;
+      width: 70%;
+
+      .datepicker {
+        font-weight: normal;
+        font-size: $due-date-font-size;
+        width: 100%;
+        box-sizing: border-box;
+        padding-left: 5px;
+        padding-top: 10px;
+        border: none;
+        background-color: inherit;
+
+        &:focus {
+          outline: none;
+        }
       }
-      &.completed {
-        color: $grayed-out-font-color;
-        font-weight: lighter;
+      .datepicker-popup {
+        float: right;
       }
+    }
+
+    .overdue-icon {
+      padding-top: 10%;
     }
   }
 }
