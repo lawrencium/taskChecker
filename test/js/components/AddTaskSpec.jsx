@@ -10,6 +10,7 @@ import AddTask from '../../../src/js/components/AddTask';
 import actions from '../../../src/js/redux/actions';
 import constants from '../../../src/js/constants';
 import TaskTextEditor from '../../../src/js/components/TaskTextEditor';
+import TaskDateEditor from '../../../src/js/components/TaskDateEditor';
 
 const { expect } = chai;
 configure({ adapter: new Adapter() });
@@ -32,25 +33,8 @@ after(() => {
 });
 
 describe('<AddTask />', () => {
-  it('renders input field for datepicker', () => {
-    expect(addTaskWrapper.find('#add-task-datepicker')).to.have.lengthOf(1);
-  });
-
   it('renders a submit button', () => {
     expect(addTaskWrapper.find('button')).to.have.lengthOf(1);
-  });
-
-  describe('datepicker', () => {
-    it('`due` defaults to today', () => {
-      return expect(addTaskWrapper.state('due').isSame(currentFakeTime)).to.be.true;
-    });
-
-    it('`due` is updated when `updateSelectedDate` is called', () => {
-      addTaskWrapper.instance().updateSelectedDate('2017-12-19');
-
-      const expected = moment('2017-12-19');
-      expect(addTaskWrapper.state('due')).to.eql(expected);
-    });
   });
 
   describe('submit button', () => {
@@ -75,19 +59,19 @@ describe('<AddTask />', () => {
     });
 
     it('dispatches action with updated due date, task title, and task notes', () => {
-      const dueDate = '2017-12-20';
+      const dueDate = moment('2017-12-20');
       const taskTitle = 'some task title';
       const taskNotes = 'some task notes';
-      addTaskWrapper.instance().updateSelectedDate(dueDate);
 
       addTaskWrapper.find(TaskTextEditor).props().onTaskTitleChange(taskTitle);
       addTaskWrapper.find(TaskTextEditor).props().onTaskNotesChange(taskNotes);
+      addTaskWrapper.find(TaskDateEditor).props().onDueDateChange(dueDate);
 
       addTaskWrapper.find('button').simulate('click');
 
       const expectedAction = actions.asyncCreateTask({
         title: taskTitle,
-        due: moment(dueDate).toISOString(),
+        due: dueDate.toISOString(),
         notes: taskNotes,
       });
 
@@ -111,10 +95,9 @@ describe('<AddTask />', () => {
       return expect(addTaskWrapper.state('taskNotesText')).to.be.empty;
     });
 
-    it('after submit, datepicker stays the same', () => {
-      const dueDate = '2017-12-20';
-      addTaskWrapper.instance().updateSelectedDate(dueDate);
-
+    it('after submit, due date stays the same', () => {
+      const dueDate = moment('2017-12-20');
+      addTaskWrapper.find(TaskDateEditor).props().onDueDateChange(dueDate);
       addTaskWrapper.find('button').simulate('click');
 
       return expect(addTaskWrapper.state('due').isSame(moment(dueDate))).to.be.true;

@@ -8,6 +8,7 @@ import actions from '../redux/actions';
 import '../../styles/task.scss';
 import constants from '../constants';
 import TaskTextEditor from './TaskTextEditor';
+import TaskDateEditor from './TaskDateEditor';
 
 class Task extends React.Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class Task extends React.Component {
       taskTitleText: task.title,
       taskNotesText: task.notes,
       taskStatus: task.taskStatus,
+      taskDueDate: moment.utc(task.due),
     };
   }
 
@@ -28,6 +30,11 @@ class Task extends React.Component {
 
   onTaskNotesTextChange = (taskNotesText) => {
     this.setState({ taskNotesText });
+  };
+
+  onTaskDueDateChange = (taskDueDate) => {
+    this.setState({ taskDueDate });
+    this.submitTask();
   };
 
   onBlur = () => {
@@ -49,6 +56,7 @@ class Task extends React.Component {
       title: taskTitle,
       notes: taskNotes,
       taskStatus: this.state.taskStatus,
+      due: this.state.taskDueDate.utcOffset(0, true).toISOString(),
     };
     const updatedTask = assign({}, this.props.task, withUpdatedFields);
     this.props.asyncUpdateTask(updatedTask);
@@ -62,7 +70,6 @@ class Task extends React.Component {
       completed: isCompleted,
       overdue: isOverdue,
     };
-    const dueDate = moment.utc(task.due).format('MM/DD/Y');
 
     return (
       <li className="task">
@@ -79,11 +86,14 @@ class Task extends React.Component {
           />
         </label>
         <span className={classNames('due-date-box', taskStatus)}>
-          <span className={classNames('due-date', taskStatus)}>
-            {dueDate}
-            &nbsp;&nbsp;
-            {isOverdue && <i className="fa fa-exclamation-circle" />}
-          </span>
+          <TaskDateEditor
+            fieldId={`due-date-field-${task.id}`}
+            containerId={`due-date-container-${task.id}`}
+            due={this.state.taskDueDate}
+            onDueDateChange={this.onTaskDueDateChange}
+          />
+          &nbsp;&nbsp;
+          {isOverdue && <i className={classNames('overdue-icon', 'fa', 'fa-exclamation-circle')} />}
         </span>
       </li>
     );
