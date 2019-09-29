@@ -44,30 +44,19 @@ describe('TasksClientSpec', () => {
       });
 
       describe('calls GoogleTasksService.getTasks()', () => {
-        it('for overdue tasks', () => {
+        it('for all incomplete tasks due by next month', () => {
           TasksClient.getTasks(noop);
-
-          return expect(getTasksCall.calledWith({
-            showCompleted: false,
-            dueMax: currentFakeTime,
-          })).to.be.true;
-        });
-
-        it('for upcoming tasks', () => {
-          TasksClient.getTasks(noop);
-
           const oneMonthLater = '2018-01-19T09:00:00.000Z';
           return expect(getTasksCall.calledWith({
             showCompleted: false,
-            dueMin: currentFakeTime,
             dueMax: oneMonthLater,
           })).to.be.true;
         });
 
-        it('twice', () => {
+        it('once', () => {
           TasksClient.getTasks(noop);
 
-          return expect(getTasksCall.calledTwice).to.be.true;
+          return expect(getTasksCall.calledOnce).to.be.true;
         });
       });
 
@@ -90,9 +79,7 @@ describe('TasksClientSpec', () => {
 
           const firstTask = { id: 1, title: 'aTask', due: beforeCurrentTime };
           const secondTask = { id: 2, title: 'anotherTask', due: afterCurrentTime };
-          getTasksCall
-            .onFirstCall().returns(Promise.resolve([firstTask]))
-            .onSecondCall().returns(Promise.resolve([secondTask]));
+          getTasksCall.returns(Promise.resolve([firstTask, secondTask]));
           const dataHandlerSpy = sinon.spy();
 
           const expectedFirstTask = assign({}, firstTask, { taskStatus: constants.TASK_STATUS.OVERDUE });
@@ -109,9 +96,7 @@ describe('TasksClientSpec', () => {
         it('throws an exception if a task id is in both overdue and upcoming tasks', () => {
           const someTask = { id: 1, title: 'someTask' };
           const sameTask = { id: 1, title: 'someTask' };
-          getTasksCall
-            .onFirstCall().returns(Promise.resolve([someTask]))
-            .onSecondCall().returns(Promise.resolve([sameTask]));
+          getTasksCall.returns(Promise.resolve([someTask, sameTask]));
 
           return expect(TasksClient.getTasks(noop)).to.be.rejectedWith(Error, /Concurrency/);
         });
@@ -119,9 +104,7 @@ describe('TasksClientSpec', () => {
         it('does not call dataHandlerSpy', () => {
           const someTask = { id: 1, title: 'someTask' };
           const sameTask = { id: 1, title: 'someTask' };
-          getTasksCall
-            .onFirstCall().returns(Promise.resolve([someTask]))
-            .onSecondCall().returns(Promise.resolve([sameTask]));
+          getTasksCall.returns(Promise.resolve([someTask, sameTask]));
           const dataHandlerSpy = sinon.spy();
 
           return TasksClient.getTasks(dataHandlerSpy).catch(() => {

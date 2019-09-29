@@ -6,22 +6,15 @@ import constants from './constants';
 
 const getTasks = (dataHandler) => {
   const thisMoment = moment();
-  const asIsoString = thisMoment.utcOffset(0, true).toISOString();
-  const overdueTasksQuery = {
-    showCompleted: false,
-    dueMax: asIsoString,
-  };
 
   const oneMonthLater = moment(thisMoment).add(1, 'months').utcOffset(0, true).toISOString();
-  const upcomingTaskQuery = {
+  const incompleteTasksDueByNextMonth = {
     showCompleted: false,
-    dueMin: asIsoString,
     dueMax: oneMonthLater,
   };
 
   return Promise.all([
-    GoogleTasksService.getTasks(overdueTasksQuery, identity),
-    GoogleTasksService.getTasks(upcomingTaskQuery, identity),
+    GoogleTasksService.getTasks(incompleteTasksDueByNextMonth, identity),
   ])
     .catch(() => {
       browserIconController.taskCallErrorHandler();
@@ -63,7 +56,7 @@ const createTask = (taskToCreate, createResponseHandler) => {
 const throwIfTaskIdAppearsTwice = (list) => {
   const idsInList = keys(keyBy(list, 'id'));
   if (list.length && list.length !== idsInList.length) {
-    throw Error('Concurrency: same task appeared in both overdue and upcoming list');
+    throw Error(`Concurrency: same task appeared in both overdue and upcoming list. Task IDs: ${list.map(elem => elem.id)}`);
   }
 };
 
