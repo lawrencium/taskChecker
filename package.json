@@ -3,7 +3,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "draft-js": "^0.10.4",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "moment": "^2.21.0",
     "pikaday": "^1.6.1",
     "react": "^16.0.0",
