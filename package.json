@@ -4,7 +4,7 @@
     "classnames": "^2.2.5",
     "draft-js": "^0.10.4",
     "lodash": "^4.17.4",
-    "moment": "^2.21.0",
+    "moment": "^2.29.2",
     "pikaday": "^1.6.1",
     "react": "^16.0.0",
     "react-chrome-redux": "^1.4.0",
